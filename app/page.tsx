@@ -47,7 +47,7 @@ function ParticleNetwork() {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)'
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.5)'
         ctx.fill()
       }
 
@@ -61,7 +61,7 @@ function ParticleNetwork() {
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(56, 189, 248, ${0.2 * (1 - dist / 150)})`
+            ctx.strokeStyle = `rgba(148, 163, 184, ${0.12 * (1 - dist / 150)})`
             ctx.lineWidth = 0.8
             ctx.stroke()
           }
