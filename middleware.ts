@@ -1,21 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Password for authentication
-const AUTH_PASSWORD = 'GoIrish200!'
 const AUTH_COOKIE_NAME = 'as-auth'
 const AUTH_COOKIE_VALUE = 'authenticated'
-
-// Routes that require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/docs']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Check if the current path is protected
-  const isProtectedRoute = PROTECTED_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  )
+  // Only protect /mission-control routes
+  const isProtectedRoute = pathname === '/mission-control' || pathname.startsWith('/mission-control/')
 
   // If not a protected route, allow access
   if (!isProtectedRoute) {
@@ -33,10 +26,9 @@ export function middleware(request: NextRequest) {
 
   // Not authenticated - redirect to login
   const loginUrl = new URL('/login', request.url)
-  loginUrl.searchParams.set('redirect', pathname)
   return NextResponse.redirect(loginUrl)
 }
 
 export const config = {
-  matcher: ['/dashboard', '/dashboard/:path*', '/docs', '/docs/:path*'],
+  matcher: ['/mission-control', '/mission-control/:path*'],
 }

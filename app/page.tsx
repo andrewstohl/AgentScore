@@ -419,7 +419,7 @@ export default function Home() {
               <a href="#" onClick={(e) => { e.preventDefault(); alert('Twitter coming soon!'); }} className="text-as-muted hover:text-white transition-colors text-sm">
                 Twitter/X
               </a>
-              <a href="https://github.com/andrewstohl/AgentScore" target="_blank" rel="noopener noreferrer" className="text-as-muted hover:text-white transition-colors text-sm">
+              <a href="#" onClick={(e) => { e.preventDefault(); }} className="text-as-muted hover:text-white transition-colors text-sm">
                 GitHub
               </a>
               <a href="#" onClick={(e) => { e.preventDefault(); alert('Documentation coming soon!'); }} className="text-as-muted hover:text-white transition-colors text-sm">
