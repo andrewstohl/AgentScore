@@ -1,3 +1,5 @@
+'use client'
+
 import { ArrowDown, Shield, Zap, Network, ChevronRight, Activity, Server, Lock } from 'lucide-react'
 
 export default function Home() {
