@@ -160,9 +160,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <span className="font-display font-bold text-xl text-as-text tracking-tight">
-              AgentScore
-            </span>
+            <div className="flex items-center gap-3">
+              <svg width="28" height="32" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="26,2 50,15 50,41 26,54 2,41 2,15" fill="none" stroke="#3B82F6" strokeWidth="3"/>
+                <polygon points="26,12 42,21 42,37 26,46 10,37 10,21" fill="none" stroke="#3B82F6" strokeWidth="2" opacity="0.4"/>
+                <circle cx="26" cy="29" r="5" fill="#3B82F6"/>
+              </svg>
+              <span className="font-display font-bold text-xl text-as-text tracking-tight">
+                AgentScore
+              </span>
+            </div>
 
             {/* Login */}
             <a
