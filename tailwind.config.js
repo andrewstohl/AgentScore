@@ -11,7 +11,7 @@ module.exports = {
         'as-bg': '#0A0F1A',
         'as-surface': '#141D2F',
         'as-border': '#1E2A42',
-        'as-accent': '#3B82F6',
+        'as-accent': '#38BDF8',
         'as-glow': '#60A5FA',
         'as-ice': '#38BDF8',
         'as-text': '#F1F5F9',

@@ -41,10 +41,14 @@ export default function LoginPage() {
         <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-as-accent/10 mb-4">
-              <Shield className="w-8 h-8 text-as-accent" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-as-ice/10 mb-4">
+              <svg width="48" height="55" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="26,2 50,15 50,41 26,54 2,41 2,15" fill="none" stroke="#38BDF8" strokeWidth="3"/>
+                <polygon points="26,12 42,21 42,37 26,46 10,37 10,21" fill="none" stroke="#38BDF8" strokeWidth="2" opacity="0.4"/>
+                <circle cx="26" cy="29" r="5" fill="#38BDF8"/>
+              </svg>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight mb-2">
+            <h1 className="text-2xl font-bold tracking-tight mb-2 text-as-text">
               AgentScore — Mission Control
             </h1>
             <p className="text-as-muted text-sm">
@@ -73,7 +77,7 @@ export default function LoginPage() {
                   required
                   autoFocus
                   disabled={isLoading}
-                  className="block w-full pl-10 pr-3 py-3 bg-as-dark border border-white/10 rounded-xl text-white placeholder-as-muted focus:outline-none focus:ring-2 focus:ring-as-accent/50 focus:border-as-accent/50 transition-all disabled:opacity-50"
+                  className="block w-full pl-10 pr-3 py-3 bg-as-surface border border-as-border rounded-xl text-as-text placeholder-as-dim focus:outline-none focus:ring-2 focus:ring-as-ice/50 focus:border-as-ice/50 transition-all disabled:opacity-50"
                   placeholder="Enter password"
                 />
               </div>
@@ -88,7 +92,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-as-accent hover:bg-as-accent-hover text-as-dark font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-as-ice hover:bg-as-ice/80 text-as-bg font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -108,7 +112,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <a 
               href="/" 
-              className="text-sm text-as-muted hover:text-as-accent transition-colors"
+              className="text-sm text-as-muted hover:text-as-ice transition-colors"
             >
               ← Back to Home
             </a>

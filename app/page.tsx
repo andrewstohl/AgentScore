@@ -31,7 +31,7 @@ function ParticleNetwork() {
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.5 + 0.5,
+        r: Math.random() * 2 + 1,
       })
     }
 
@@ -47,7 +47,7 @@ function ParticleNetwork() {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(59, 130, 246, 0.5)'
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)'
         ctx.fill()
       }
 
@@ -61,8 +61,8 @@ function ParticleNetwork() {
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(59, 130, 246, ${0.15 * (1 - dist / 150)})`
-            ctx.lineWidth = 0.5
+            ctx.strokeStyle = `rgba(56, 189, 248, ${0.2 * (1 - dist / 150)})`
+            ctx.lineWidth = 0.8
             ctx.stroke()
           }
         }
@@ -174,7 +174,7 @@ export default function Home() {
             {/* Login */}
             <a
               href="/login"
-              className="group flex items-center gap-2 px-4 py-2 bg-as-surface border border-as-border text-as-muted text-sm font-medium rounded-lg hover:text-white hover:border-as-accent/50 transition-all duration-300"
+              className="group flex items-center gap-2 px-4 py-2 bg-as-surface border border-as-border text-as-muted text-sm font-medium rounded-lg hover:text-white hover:border-as-ice/50 transition-all duration-300"
             >
               Login
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
