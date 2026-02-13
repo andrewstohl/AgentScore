@@ -44,7 +44,7 @@ const TASKS = {
 
 const DELIVERABLES = [
   { title: '⭐ Subnet Design Proposal', file: 'proposal-v3', version: 'v3 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Major rewrite. 70% mechanism design, 30% business. Mathematical specs, anti-gaming proofs, YC3 parameters, dTAO strategy. Based on gap analysis.' },
-  { title: '⭐ Pitch Deck (HTML slides)', file: 'pitch-deck-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Also viewable as real slides at /deck.html with arrow key navigation.' },
+  { title: '⭐ Pitch Deck (SLIDES)', file: '__external__/deck.html', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Real slide deck. Arrow keys to navigate. Ctrl+P to save as PDF.' },
   { title: 'Explainer Video Scripts', file: 'video-scripts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Two versions: "The Problem" narrative and "The Future" narrative. 6-7 min each.' },
   { title: 'X/Twitter Launch Posts (25)', file: 'x-posts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: '25 posts across 6 categories. Posting cadence and voice guide included.' },
   { title: 'Gap Analysis', file: 'gap-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'Brutally honest assessment of what it takes to WIN. Identifies weaknesses, required improvements, what to cut.' },
@@ -155,6 +155,11 @@ export default function MissionControl() {
   const [loading, setLoading] = useState(false)
 
   const openDoc = async (file: string) => {
+    // External links open in new tab
+    if (file.startsWith('__external__')) {
+      window.open(file.replace('__external__', ''), '_blank')
+      return
+    }
     setLoading(true)
     try {
       const r = await fetch(`/docs/${file}.md`)
