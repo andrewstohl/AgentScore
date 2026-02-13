@@ -194,15 +194,15 @@ export default function Home() {
           {/* Headline */}
           <FadeInSection delay={100}>
             <h1 className="font-display font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] mb-8">
-              Every payment network gets a credit rating agency.{' '}
-              <span className="text-as-ice text-glow">The agent economy is next.</span>
+              Intelligence before every{' '}
+              <span className="text-as-ice text-glow">agentic transaction.</span>
             </h1>
           </FadeInSection>
 
           {/* Subheadline */}
           <FadeInSection delay={200}>
             <p className="text-as-muted text-lg sm:text-xl max-w-2xl mx-auto mb-12">
-              AgentScore is building the trust layer for autonomous commerce.
+              The quality layer for agentic payments. Neutral. Verified. Real-time.
             </p>
           </FadeInSection>
 
@@ -231,7 +231,7 @@ export default function Home() {
 
           <FadeInSection delay={150}>
             <p className="text-as-muted text-lg leading-relaxed max-w-2xl mx-auto">
-              The biggest companies in tech are building payment infrastructure for AI agents — wallets, identity, checkout. The missing piece is intelligence. A neutral layer that tells agents what&apos;s worth paying for, who to trust, and what to avoid.
+              The biggest companies in tech are building payment infrastructure for AI agents. Wallets, identity, checkout. The missing piece is intelligence. A neutral layer that tells agents what&apos;s worth paying for, who to trust, and what to avoid.
             </p>
           </FadeInSection>
         </div>
@@ -282,7 +282,7 @@ export default function Home() {
                   Verified Routing
                 </h3>
                 <p className="text-as-muted leading-relaxed">
-                  Agents don&apos;t just get scores — they get the best path. Quality-adjusted routing that saves money and prevents bad transactions before they happen.
+                  Agents don&apos;t just get scores. They get the best path. Quality-adjusted routing that saves money and prevents bad transactions before they happen.
                 </p>
               </div>
             </FadeInSection>
@@ -297,7 +297,7 @@ export default function Home() {
                   Structural Neutrality
                 </h3>
                 <p className="text-as-muted leading-relaxed">
-                  Built as decentralized infrastructure. No single platform controls the ratings. The agent economy needs a trust layer that isn&apos;t owned by the players it rates.
+                  Built as decentralized infrastructure. No single entity controls the ratings. Trust has to be neutral by design, not by promise.
                 </p>
               </div>
             </FadeInSection>
