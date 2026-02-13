@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentScore - Bittensor Subnet Ideathon 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0A0F1A;
+            --bg-secondary: #111827;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --accent: #38BDF8;
+            --accent-dim: rgba(56, 189, 248, 0.1);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-primary);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .slide-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 6rem;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            transform: translateX(-50px);
+        }
+
+        /* Slide content wrapper for 16:9 aspect ratio */
+        .slide-content {
+            width: 100%;
+            max-width: 1280px;
+            aspect-ratio: 16/9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            font-size: clamp(1rem, 1.8vw, 1.35rem);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            padding-left: 1.75rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .tagline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+        }
+
+        .logo svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.4));
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            z-index: 100;
+        }
+
+        .slide-number span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            z-index: 100;
+        }
+
+        .nav-hint kbd {
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Inter', monospace;
+            margin: 0 0.2rem;
+        }
+
+        .pdf-hint {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0.5;
+            z-index: 100;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: var(--bg-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(56, 189, 248, 0.3);
+        }
+
+        .manifesto {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+            font-style: italic;
+            color: var(--accent);
+            margin-top: 2rem;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .endpoint-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem 2rem;
+            margin-top: 1rem;
+        }
+
+        .endpoint-list li::before {
+            top: 0.55em;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+            }
+            
+            .slide-content {
+                aspect-ratio: auto;
+                min-height: 100%;
+            }
+            
+            .endpoint-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media print {
+            .slide {
+                position: relative;
+                opacity: 1 !important;
+                transform: none !important;
+                pointer-events: all;
+                page-break-after: always;
+                height: 100vh;
+            }
+            
+            .slide-number, .nav-hint, .pdf-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-hint">Press <kbd>Cmd</kbd>+<kbd>P</kbd> (Mac) or <kbd>Ctrl</kbd>+<kbd>P</kbd> (Windows) to save as PDF</div>
+    
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active" data-slide="1">
+            <div class="slide-content" style="align-items: center; text-align: center;">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#38BDF8"/>
+                                <stop offset="100%" style="stop-color:#0EA5E9"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 5L90 27.5V72.5L50 95L10 72.5V27.5L50 5Z" stroke="url(#hexGradient)" stroke-width="3" fill="rgba(56, 189, 248, 0.1)"/>
+                        <path d="M50 20L75 35V65L50 80L25 65V35L50 20Z" stroke="url(#hexGradient)" stroke-width="2" fill="none" opacity="0.6"/>
+                        <circle cx="50" cy="50" r="8" fill="url(#hexGradient)"/>
+                    </svg>
+                </div>
+                <h1 style="background: none; -webkit-text-fill-color: var(--text-primary);">AgentScore</h1>
+                <p class="tagline">"When machines spend money, trust can't be a feature. It has to be the foundation."</p>
+                <span class="event-badge">Bittensor Subnet Ideathon 2026</span>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide" data-slide="2">
+            <div class="slide-content">
+                <h2>Agents Are Spending Money Blind</h2>
+                <ul>
+                    <li>AI agents now autonomously transact billions in services, APIs, and compute</li>
+                    <li>No standardized quality or trust layer exists to verify agent service providers</li>
+                    <li>Buyers cannot distinguish reliable endpoints from unreliable ones</li>
+                    <li>Fraud, downtime, and quality failures cost the agent economy millions daily</li>
+                    <li>Reputation systems are fragmented, gamed, or controlled by single vendors</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Market Timing -->
+        <div class="slide" data-slide="3">
+            <div class="slide-content">
+                <h2>The Rails Are Built. Intelligence Isn't.</h2>
+                <ul class="endpoint-list">
+                    <li><strong>x402 (Coinbase):</strong> ~$7M across 10.6M transactions, 98.5% volume in final 15 days</li>
+                    <li><strong>AP2 (Google):</strong> Agent-to-Agent Protocol with Mastercard, PayPal, Adyen, Deloitte coalition</li>
+                    <li><strong>ACP (Stripe):</strong> Agentic Commerce Protocol used in ChatGPT</li>
+                    <li><strong>Visa TAP:</strong> Transaction Authorization Protocol for agent identity verification</li>
+                    <li><strong>ERC-8004:</strong> Ethereum standard for agent service agreements ratified</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Solution -->
+        <div class="slide" data-slide="4">
+            <div class="slide-content">
+                <h2>AgentScore: Real-Time Quality Ratings API</h2>
+                <ul>
+                    <li>Decentralized quality intelligence for agent commerce endpoints</li>
+                    <li>Real-time ratings based on actual transaction outcomes, not marketing claims</li>
+                    <li>Simple REST API: query any endpoint and receive a trust score</li>
+                    <li>Coverage across compute, APIs, agent services, and payment processors</li>
+                    <li>Plug-and-play integration with x402, AP2, ACP, and Visa TAP</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: How It Works -->
+        <div class="slide" data-slide="5">
+            <div class="slide-content">
+                <h2>Predict-Then-Measure Architecture</h2>
+                <ul>
+                    <li>Miners predict quality metrics for endpoints: uptime, latency, accuracy, cost integrity</li>
+                    <li>Validators execute real micro-transactions to verify predictions via commit-reveal</li>
+                    <li>Scores update continuously based on prediction accuracy and ground truth</li>
+                    <li>Commit-reveal prevents gaming: predictions locked before measurement occurs</li>
+                    <li>Architecture inspired by Taoshi SN8 but applied to service quality, not financial markets</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Why Bittensor -->
+        <div class="slide" data-slide="6">
+            <div class="slide-content">
+                <h2>Decentralized Verification, Game-Theory Incentives</h2>
+                <ul>
+                    <li>Yuma Consensus ensures fair reward distribution based on actual contribution</li>
+                    <li>Decentralized network cannot be gamed by a single vendor or competitor</li>
+                    <li>No central authority controls ratings, preventing manipulation or censorship</li>
+                    <li>Cryptoeconomic security: attacking the network costs more than the potential gain</li>
+                    <li>Native incentive alignment with TAO rewards driving continuous improvement</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Go-To-Market -->
+        <div class="slide" data-slide="7">
+            <div class="slide-content">
+                <h2>Inherently Viral Distribution</h2>
+                <ul>
+                    <li><strong>Phase 1:</strong> Public leaderboard rating other Bittensor subnets, creating natural visibility within our target market</li>
+                    <li><strong>Phase 2:</strong> Free ratings API tier for developers with paid premium features</li>
+                    <li><strong>Phase 3:</strong> Enterprise subscriptions for financial institutions and payment processors</li>
+                    <li>Partner integrations with x402, ACP, and Visa TAP as default trust provider</li>
+                    <li>Developer SDK for one-line integration into agent frameworks</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Revenue Model -->
+        <div class="slide" data-slide="8">
+            <div class="slide-content">
+                <h2>Multiple Revenue Streams Aligned with Network Growth</h2>
+                <ul>
+                    <li><strong>API Queries:</strong> Per-call pricing for real-time ratings, volume discounts for high-usage clients</li>
+                    <li><strong>Enterprise Subscriptions:</strong> Custom integrations, SLA guarantees, dedicated support</li>
+                    <li><strong>Verified Routing Proxy:</strong> 0.5% to 2% transaction fee for routing payments through trusted endpoints</li>
+                    <li><strong>Premium Badges:</strong> Verified quality certifications that service providers display</li>
+                    <li><strong>Data Licensing:</strong> Historical quality data for analytics, research, and risk modeling</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Competitive Advantage -->
+        <div class="slide" data-slide="9">
+            <div class="slide-content">
+                <h2>First Mover with Structural Moats</h2>
+                <ul>
+                    <li>First dedicated quality intelligence layer for agent commerce</li>
+                    <li>Objective ground truth via real transactions, not subjective reviews or self-reporting</li>
+                    <li>Network effects: more endpoints rated attracts more users, which attracts more miners</li>
+                    <li>Data moat: historical quality data becomes increasingly valuable and harder to replicate</li>
+                    <li>Bittensor integration provides uncensorable, incentive-aligned infrastructure</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: The Ask / Closing -->
+        <div class="slide" data-slide="10">
+            <div class="slide-content" style="align-items: center; text-align: center;">
+                <h2>Selected for Bittensor Ideathon 2026</h2>
+                <ul style="text-align: left; max-width: 700px;">
+                    <li>Building toward testnet launch in Q2 2026</li>
+                    <li>Seeking subnet registration and early validator participation</li>
+                    <li>Recruiting miners with expertise in service quality prediction</li>
+                    <li>Partnership discussions open with payment rails and agent frameworks</li>
+                </ul>
+                <a href="https://agentscore.ai" class="cta-button" target="_blank">Visit agentscore.ai</a>
+                <p class="manifesto">"When machines spend money, trust can't be a feature. It has to be the foundation."</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-number"><span id="current">1</span> / 10</div>
+    <div class="nav-hint">Navigate with <kbd>←</kbd> <kbd>→</kbd> or arrow keys</div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const currentEl = document.getElementById('current');
+        let currentSlide = 1;
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides.forEach(slide => {
+                slide.classList.remove('active', 'prev');
+            });
+            
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+            
+            slides.forEach((slide, index) => {
+                const slideNum = index + 1;
+                if (slideNum === currentSlide) {
+                    slide.classList.add('active');
+                } else if (slideNum < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+            
+            currentEl.textContent = currentSlide;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 1;
+                showSlide(currentSlide);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
