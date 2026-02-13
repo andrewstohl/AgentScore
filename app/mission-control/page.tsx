@@ -17,16 +17,20 @@ const TASKS = {
     { title: 'Fill research gaps', owner: 'Doug', priority: 'high', note: 'x402 endpoints, AP2, competitor scan' },
   ],
   inProgress: [
-    { title: 'Review + clean all deliverable drafts', owner: 'Doug', priority: 'high', note: 'Factual errors to fix' },
     { title: 'Hero headline options for Drew', owner: 'Doug', priority: 'medium', note: 'Drew unhappy with current' },
     { title: 'Landing page polish', owner: 'Doug', priority: 'medium', note: 'Dark hero bg, particle visibility' },
+    { title: 'Drew: review all deliverables in MC', owner: 'Drew', priority: 'high', note: 'Proposal v3, deck, scripts, X posts' },
   ],
   done: [
+    { title: 'Proposal v3 (major rewrite)', owner: 'Doug' },
+    { title: 'Gap analysis (what it takes to win)', owner: 'Doug' },
+    { title: 'Winning subnets research', owner: 'Doug' },
+    { title: 'HTML slide deck (/deck.html)', owner: 'Dev Agent' },
     { title: 'Proposal v2 first draft', owner: 'Doug' },
     { title: 'Pitch deck v1 first draft', owner: 'Doug' },
     { title: 'Video scripts v1 (2 versions)', owner: 'Doug' },
     { title: 'X/Twitter posts (25 ideas)', owner: 'Doug' },
-    { title: 'Mission Control v2', owner: 'Doug' },
+    { title: 'Mission Control v2+v3', owner: 'Doug' },
     { title: 'Landing page redesign', owner: 'Dev Agent' },
     { title: 'Research brief v1', owner: 'Lead Analyst' },
     { title: 'Project plan', owner: 'Doug' },
@@ -39,14 +43,16 @@ const TASKS = {
 }
 
 const DELIVERABLES = [
-  { title: 'Subnet Design Proposal', file: 'proposal-v2', version: 'v2 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Restructured around judging criteria. 8 sections. Expert feedback incorporated.' },
-  { title: 'Pitch Deck (10 slides)', file: 'pitch-deck-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: '10 slides with speaker notes. Some factual errors to fix (x402 numbers).' },
+  { title: '⭐ Subnet Design Proposal', file: 'proposal-v3', version: 'v3 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Major rewrite. 70% mechanism design, 30% business. Mathematical specs, anti-gaming proofs, YC3 parameters, dTAO strategy. Based on gap analysis.' },
+  { title: '⭐ Pitch Deck (HTML slides)', file: 'pitch-deck-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Also viewable as real slides at /deck.html with arrow key navigation.' },
   { title: 'Explainer Video Scripts', file: 'video-scripts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Two versions: "The Problem" narrative and "The Future" narrative. 6-7 min each.' },
-  { title: 'X/Twitter Launch Posts', file: 'x-posts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: '25 posts across 6 categories. Posting cadence and voice guide included.' },
-  { title: 'Research Brief', file: 'research-brief', version: 'v1 Complete', status: 'Complete', owner: 'Lead Analyst', desc: 'Bittensor ecosystem, agentic commerce landscape, ideathon intel.' },
-  { title: 'Original Proposal (reference)', file: 'ideathon-submission', version: 'v1', status: 'Superseded', owner: 'Doug', desc: 'Original submission doc. Kept for reference, replaced by proposal-v2.' },
-  { title: 'Business Analysis (reference)', file: 'business-analysis', version: 'v1', status: 'Reference', owner: 'Doug', desc: 'Internal strategic analysis. Not a submission deliverable.' },
-  { title: 'Project Plan', file: 'project-plan', version: 'v1', status: 'Living Doc', owner: 'Doug', desc: 'Master roadmap and sprint planning.' },
+  { title: 'X/Twitter Launch Posts (25)', file: 'x-posts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: '25 posts across 6 categories. Posting cadence and voice guide included.' },
+  { title: 'Gap Analysis', file: 'gap-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'Brutally honest assessment of what it takes to WIN. Identifies weaknesses, required improvements, what to cut.' },
+  { title: 'Winning Subnets Research', file: 'winning-subnets-research', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'Analysis of SN8, SN1, SN9 mechanisms. What winning looks like. Bittensor terminology guide.' },
+  { title: 'Research Brief', file: 'research-brief', version: 'v1', status: 'Complete', owner: 'Lead Analyst', desc: 'Bittensor ecosystem, agentic commerce landscape, ideathon intel.' },
+  { title: 'Previous Proposal (v2)', file: 'proposal-v2', version: 'v2', status: 'Superseded', owner: 'Doug', desc: 'Superseded by v3. Kept for reference.' },
+  { title: 'Original Proposal (v1)', file: 'ideathon-submission', version: 'v1', status: 'Superseded', owner: 'Doug', desc: 'Original submission doc. Kept for reference.' },
+  { title: 'Business Analysis', file: 'business-analysis', version: 'v1', status: 'Reference', owner: 'Doug', desc: 'Internal strategic analysis. Not a submission deliverable.' },
 ]
 
 const APPROVALS = [
@@ -83,6 +89,11 @@ const TEAM = [
 ]
 
 const ACTIVITY = [
+  { who: 'Doug', what: 'Proposal v3 completed (major rewrite: 70% mechanism, math specs, anti-gaming proofs)', when: 'Feb 13, 5:15 PM' },
+  { who: 'Doug', what: 'Gap analysis completed (brutal honest assessment of what it takes to win)', when: 'Feb 13, 4:45 PM' },
+  { who: 'Doug', what: 'Winning subnets research completed (SN8, SN1, SN9 analysis)', when: 'Feb 13, 4:46 PM' },
+  { who: 'Dev Agent', what: 'HTML slide deck built at /deck.html (arrow key nav, 16:9, print-to-PDF)', when: 'Feb 13, 4:44 PM' },
+  { who: 'Doug', what: 'MC v3: merged Content+Docs into Deliverables, fixed doc viewer, real data', when: 'Feb 13, 4:20 PM' },
   { who: 'Doug', what: 'Proposal v2 draft completed (restructured around judging criteria)', when: 'Feb 13, 4:03 PM' },
   { who: 'Doug', what: 'Video scripts v1 completed (2 versions)', when: 'Feb 13, 4:02 PM' },
   { who: 'Doug', what: 'X/Twitter posts completed (25 posts across 6 categories)', when: 'Feb 13, 4:01 PM' },
