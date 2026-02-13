@@ -1,7 +1,91 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Shield, Navigation, Scale, ChevronDown, ArrowRight } from 'lucide-react'
+
+// Particle network canvas
+function ParticleNetwork() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    let particles: { x: number; y: number; vx: number; vy: number; r: number }[] = []
+
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    // Create particles
+    const count = Math.min(80, Math.floor(window.innerWidth / 15))
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 1.5 + 0.5,
+      })
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      // Update and draw particles
+      for (const p of particles) {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.5)'
+        ctx.fill()
+      }
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 150) {
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(59, 130, 246, ${0.15 * (1 - dist / 150)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      animId = requestAnimationFrame(draw)
+    }
+    draw()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 z-0"
+      style={{ opacity: 0.6 }}
+    />
+  )
+}
 
 // Simple fade-in hook using Intersection Observer
 function useFadeIn() {
@@ -85,7 +169,7 @@ export default function Home() {
               href="/login"
               className="group flex items-center gap-2 px-4 py-2 bg-as-surface border border-as-border text-as-muted text-sm font-medium rounded-lg hover:text-white hover:border-as-accent/50 transition-all duration-300"
             >
-              Mission Control
+              Login
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
           </div>
@@ -94,8 +178,8 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center hero-bg">
-        {/* Grid overlay */}
-        <div className="hero-grid"></div>
+        {/* Particle network */}
+        <ParticleNetwork />
         {/* Extra gradient orb */}
         <div className="hero-bg-extra"></div>
 
@@ -110,15 +194,15 @@ export default function Home() {
           {/* Headline */}
           <FadeInSection delay={100}>
             <h1 className="font-display font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] mb-8">
-              The credit rating agency for{' '}
-              <span className="text-as-ice text-glow">the agent economy.</span>
+              Every payment network gets a credit rating agency.{' '}
+              <span className="text-as-ice text-glow">The agent economy is next.</span>
             </h1>
           </FadeInSection>
 
           {/* Subheadline */}
           <FadeInSection delay={200}>
             <p className="text-as-muted text-lg sm:text-xl max-w-2xl mx-auto mb-12">
-              Every payment network gets a trust layer. Autonomous commerce is no different.
+              AgentScore is building the trust layer for autonomous commerce.
             </p>
           </FadeInSection>
 
