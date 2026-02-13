@@ -267,8 +267,8 @@ export default function Home() {
             {/* Card 1 */}
             <FadeInSection delay={0}>
               <div className="bg-as-surface border border-as-border rounded-xl p-8 card-hover h-full">
-                <div className="w-12 h-12 rounded-lg bg-as-accent/10 flex items-center justify-center mb-6">
-                  <Shield className="w-6 h-6 text-as-accent" />
+                <div className="w-12 h-12 rounded-lg bg-as-ice/10 flex items-center justify-center mb-6">
+                  <Shield className="w-6 h-6 text-as-ice" />
                 </div>
                 <h3 className="font-display font-bold text-xl mb-4 text-as-text">
                   Quality Intelligence
@@ -282,8 +282,8 @@ export default function Home() {
             {/* Card 2 */}
             <FadeInSection delay={100}>
               <div className="bg-as-surface border border-as-border rounded-xl p-8 card-hover h-full">
-                <div className="w-12 h-12 rounded-lg bg-as-accent/10 flex items-center justify-center mb-6">
-                  <Navigation className="w-6 h-6 text-as-accent" />
+                <div className="w-12 h-12 rounded-lg bg-as-ice/10 flex items-center justify-center mb-6">
+                  <Navigation className="w-6 h-6 text-as-ice" />
                 </div>
                 <h3 className="font-display font-bold text-xl mb-4 text-as-text">
                   Verified Routing
@@ -297,8 +297,8 @@ export default function Home() {
             {/* Card 3 */}
             <FadeInSection delay={200}>
               <div className="bg-as-surface border border-as-border rounded-xl p-8 card-hover h-full">
-                <div className="w-12 h-12 rounded-lg bg-as-accent/10 flex items-center justify-center mb-6">
-                  <Scale className="w-6 h-6 text-as-accent" />
+                <div className="w-12 h-12 rounded-lg bg-as-ice/10 flex items-center justify-center mb-6">
+                  <Scale className="w-6 h-6 text-as-ice" />
                 </div>
                 <h3 className="font-display font-bold text-xl mb-4 text-as-text">
                   Structural Neutrality
