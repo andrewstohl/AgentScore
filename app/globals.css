@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 10, 10, 15;
-  --background-end-rgb: 15, 23, 42;
+  --foreground-rgb: 241, 245, 249;
+  --background-rgb: 10, 15, 26;
 }
 
 * {
@@ -23,13 +22,14 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to bottom,
-    rgb(var(--background-start-rgb)),
-    rgb(var(--background-end-rgb))
-  );
+  background: #0A0F1A;
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Space Grotesk for headlines */
+.font-display {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 a {
@@ -39,27 +39,165 @@ a {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: #0A0F1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
+  background: #1E2A42;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #3B82F6;
+}
+
+/* Hero animated background */
+.hero-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg::before,
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: gradientMove 25s ease-in-out infinite;
+}
+
+.hero-bg::before {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  top: -200px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.hero-bg::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -12s;
+}
+
+.hero-bg-extra {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: gradientPulse 20s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(50px, 30px) scale(1.1);
+  }
+  50% {
+    transform: translate(20px, 60px) scale(0.95);
+  }
+  75% {
+    transform: translate(-30px, 20px) scale(1.05);
+  }
+}
+
+@keyframes gradientPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
 }
 
 /* Glow effects */
 .glow-accent {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+}
+
+.glow-accent:hover {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
 }
 
 .text-glow {
-  text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  text-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+/* Scroll indicator animation */
+@keyframes scrollBounce {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+}
+
+.scroll-indicator {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+/* Marquee pause on hover */
+.marquee-container:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* Smooth fade in on scroll */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* CTA gradient glow */
+.cta-glow {
+  position: relative;
+}
+
+.cta-glow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
