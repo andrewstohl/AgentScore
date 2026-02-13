@@ -80,20 +80,22 @@ export default function Home() {
               AgentScore
             </span>
 
-            {/* CTA Button */}
-            <button
-              onClick={() => scrollToSection('cta')}
-              className="group flex items-center gap-2 px-4 py-2 bg-as-accent text-white text-sm font-medium rounded-lg hover:bg-as-glow transition-all duration-300 glow-accent"
+            {/* Login */}
+            <a
+              href="/login"
+              className="group flex items-center gap-2 px-4 py-2 bg-as-surface border border-as-border text-as-muted text-sm font-medium rounded-lg hover:text-white hover:border-as-accent/50 transition-all duration-300"
             >
-              Get Early Access
+              Mission Control
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </a>
           </div>
         </div>
       </header>
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center hero-bg">
+        {/* Grid overlay */}
+        <div className="hero-grid"></div>
         {/* Extra gradient orb */}
         <div className="hero-bg-extra"></div>
 
@@ -107,19 +109,16 @@ export default function Home() {
 
           {/* Headline */}
           <FadeInSection delay={100}>
-            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight mb-6">
-              Every payment network gets
-              <br />
-              a credit rating agency.
-              <br />
-              <span className="text-as-ice text-glow">The agent economy is next.</span>
+            <h1 className="font-display font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] mb-8">
+              The credit rating agency for{' '}
+              <span className="text-as-ice text-glow">the agent economy.</span>
             </h1>
           </FadeInSection>
 
           {/* Subheadline */}
           <FadeInSection delay={200}>
-            <p className="text-as-muted text-lg max-w-2xl mx-auto mb-12">
-              AgentScore is building the trust layer for autonomous commerce.
+            <p className="text-as-muted text-lg sm:text-xl max-w-2xl mx-auto mb-12">
+              Every payment network gets a trust layer. Autonomous commerce is no different.
             </p>
           </FadeInSection>
 
@@ -253,28 +252,9 @@ export default function Home() {
       <section id="cta" className="py-32 lg:py-40 cta-glow">
         <div className="relative z-10 max-w-2xl mx-auto px-6 lg:px-8 text-center">
           <FadeInSection>
-            <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
+            <h2 className="font-display font-bold text-3xl sm:text-4xl mb-6">
               Launching soon.
             </h2>
-          </FadeInSection>
-
-          <FadeInSection delay={100}>
-            <p className="text-as-muted mb-10">
-              Be first to know when AgentScore goes live.
-            </p>
-          </FadeInSection>
-
-          <FadeInSection delay={200}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full sm:w-auto px-5 py-3 bg-as-surface border border-as-border rounded-lg text-as-text placeholder-as-dim focus:outline-none focus:border-as-accent transition-colors"
-              />
-              <button className="w-full sm:w-auto px-6 py-3 bg-as-accent text-white font-medium rounded-lg hover:bg-as-glow transition-all glow-accent">
-                Get Early Access
-              </button>
-            </div>
           </FadeInSection>
         </div>
       </section>
