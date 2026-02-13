@@ -81,13 +81,13 @@ const tasks = {
 
 // Documents Data
 const documents = [
-  { name: 'Subnet Design Proposal (Draft)', status: 'In progress' },
-  { name: 'Strategic Business Analysis', status: 'Internal reference' },
-  { name: 'Research Brief', status: 'v1 complete' },
-  { name: 'Ideathon Requirements', status: 'Reference' },
-  { name: 'Project Plan', status: 'Living document' },
-  { name: 'Pitch Deck', status: 'Not started' },
-  { name: 'Video Script', status: 'Not started' },
+  { name: 'Subnet Design Proposal (Draft)', status: 'In progress', slug: 'ideathon-submission' },
+  { name: 'Strategic Business Analysis', status: 'Internal reference', slug: 'business-analysis' },
+  { name: 'Research Brief', status: 'v1 complete', slug: 'research-brief' },
+  { name: 'Ideathon Requirements', status: 'Reference', slug: 'ideathon-requirements' },
+  { name: 'Project Plan', status: 'Living document', slug: 'project-plan' },
+  { name: 'Pitch Deck', status: 'Not started', slug: null },
+  { name: 'Video Script', status: 'Not started', slug: null },
 ]
 
 // Team Data
@@ -142,6 +142,12 @@ export default function Dashboard() {
               </Link>
             </div>
             <div className="hidden md:flex items-center gap-8">
+              <Link href="/" className="text-sm text-as-muted hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link href="/docs" className="text-sm text-as-muted hover:text-white transition-colors">
+                Docs
+              </Link>
               <Link href="/" className="text-sm text-as-muted hover:text-white transition-colors flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
                 Back to Home
@@ -298,32 +304,60 @@ export default function Dashboard() {
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {documents.map((doc) => (
-                <a
-                  key={doc.name}
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); alert('Document coming soon!'); }}
-                  className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-as-accent/30 hover:bg-white/[0.07] transition-all group"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-as-accent/10 transition-colors">
-                      <FileText className="w-5 h-5 text-as-muted group-hover:text-as-accent transition-colors" />
+                doc.slug ? (
+                  <Link
+                    key={doc.name}
+                    href={`/docs/${doc.slug}`}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-as-accent/30 hover:bg-white/[0.07] transition-all group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-as-accent/10 transition-colors">
+                        <FileText className="w-5 h-5 text-as-muted group-hover:text-as-accent transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-sm mb-1 truncate">{doc.name}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          doc.status === 'v1 complete'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : doc.status === 'In progress'
+                            ? 'bg-amber-500/10 text-amber-400'
+                            : doc.status === 'Not started'
+                            ? 'bg-red-500/10 text-red-400'
+                            : 'bg-white/10 text-as-muted'
+                        }`}>
+                          {doc.status}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm mb-1 truncate">{doc.name}</h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        doc.status === 'v1 complete' 
-                          ? 'bg-emerald-500/10 text-emerald-400' 
-                          : doc.status === 'In progress'
-                          ? 'bg-amber-500/10 text-amber-400'
-                          : doc.status === 'Not started'
-                          ? 'bg-red-500/10 text-red-400'
-                          : 'bg-white/10 text-as-muted'
-                      }`}>
-                        {doc.status}
-                      </span>
+                  </Link>
+                ) : (
+                  <a
+                    key={doc.name}
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); alert('Document coming soon!'); }}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-as-accent/30 hover:bg-white/[0.07] transition-all group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-as-accent/10 transition-colors">
+                        <FileText className="w-5 h-5 text-as-muted group-hover:text-as-accent transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-sm mb-1 truncate">{doc.name}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          doc.status === 'v1 complete'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : doc.status === 'In progress'
+                            ? 'bg-amber-500/10 text-amber-400'
+                            : doc.status === 'Not started'
+                            ? 'bg-red-500/10 text-red-400'
+                            : 'bg-white/10 text-as-muted'
+                        }`}>
+                          {doc.status}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
+                )
               ))}
             </div>
           </section>

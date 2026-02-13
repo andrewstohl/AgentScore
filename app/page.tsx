@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowDown, Shield, Zap, Network, ChevronRight, Activity, Server, Lock, LayoutDashboard } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Home() {
   const scrollToSection = (id: string) => {
@@ -26,6 +27,7 @@ export default function Home() {
               <a href="#solution" className="text-sm text-as-muted hover:text-white transition-colors">Solution</a>
               <a href="#how-it-works" className="text-sm text-as-muted hover:text-white transition-colors">How It Works</a>
               <a href="#ecosystem" className="text-sm text-as-muted hover:text-white transition-colors">Ecosystem</a>
+              <Link href="/docs" className="text-sm text-as-muted hover:text-white transition-colors">Docs</Link>
             </div>
             <div className="flex items-center gap-4">
               <a 
