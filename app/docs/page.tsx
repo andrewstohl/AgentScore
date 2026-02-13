@@ -4,6 +4,15 @@ import { FileText, ArrowLeft, BookOpen, Clock, CheckCircle2, Clock3 } from 'luci
 // Document metadata
 const documents = [
   {
+    slug: 'punchlist',
+    title: 'Punch List — Feb 13',
+    description: "Tomorrow's task list and weekly schedule",
+    status: 'Active',
+    statusColor: 'amber',
+    lastUpdated: 'Feb 12, 2026',
+    readTime: '3 min read',
+  },
+  {
     slug: 'research-brief',
     title: 'Research Brief',
     description: 'Comprehensive research on Bittensor ecosystem, agentic commerce landscape, and Ideathon intelligence.',

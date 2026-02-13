@@ -81,6 +81,7 @@ const tasks = {
 
 // Documents Data
 const documents = [
+  { name: 'Punch List — Feb 13', status: 'Active', slug: 'punchlist' },
   { name: 'Subnet Design Proposal (Draft)', status: 'In progress', slug: 'ideathon-submission' },
   { name: 'Strategic Business Analysis', status: 'Internal reference', slug: 'business-analysis' },
   { name: 'Research Brief', status: 'v1 complete', slug: 'research-brief' },
