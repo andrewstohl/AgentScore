@@ -27,16 +27,15 @@ export default function Home() {
               <a href="#solution" className="text-sm text-as-muted hover:text-white transition-colors">Solution</a>
               <a href="#how-it-works" className="text-sm text-as-muted hover:text-white transition-colors">How It Works</a>
               <a href="#ecosystem" className="text-sm text-as-muted hover:text-white transition-colors">Ecosystem</a>
-              <Link href="/docs" className="text-sm text-as-muted hover:text-white transition-colors">Docs</Link>
             </div>
             <div className="flex items-center gap-4">
-              <a 
-                href="/dashboard" 
+              <Link 
+                href="/mission-control" 
                 className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-sm text-as-muted hover:text-white hover:border-as-accent/30 transition-all"
               >
                 <LayoutDashboard className="w-4 h-4" />
-                Dashboard
-              </a>
+                Mission Control
+              </Link>
               <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-as-accent/10 text-as-accent text-xs font-medium border border-as-accent/20">
                 Bittensor Subnet
               </span>

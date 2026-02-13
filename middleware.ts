@@ -7,6 +7,15 @@ const AUTH_COOKIE_VALUE = 'authenticated'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Redirect old routes to mission-control
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) {
+    return NextResponse.redirect(new URL('/mission-control', request.url))
+  }
+  
+  if (pathname === '/docs' || pathname.startsWith('/docs/')) {
+    return NextResponse.redirect(new URL('/mission-control', request.url))
+  }
+
   // Only protect /mission-control routes
   const isProtectedRoute = pathname === '/mission-control' || pathname.startsWith('/mission-control/')
 
@@ -26,9 +35,17 @@ export function middleware(request: NextRequest) {
 
   // Not authenticated - redirect to login
   const loginUrl = new URL('/login', request.url)
+  loginUrl.searchParams.set('redirect', pathname)
   return NextResponse.redirect(loginUrl)
 }
 
 export const config = {
-  matcher: ['/mission-control', '/mission-control/:path*'],
+  matcher: [
+    '/mission-control',
+    '/mission-control/:path*',
+    '/dashboard',
+    '/dashboard/:path*',
+    '/docs',
+    '/docs/:path*',
+  ],
 }
