@@ -1,537 +1,397 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { 
-  Activity, 
-  LayoutDashboard, 
-  FileText, 
-  LogOut, 
-  Menu, 
-  X, 
-  ChevronDown, 
-  ChevronRight,
-  ArrowLeft,
-  Clock,
-  Target,
-  CheckCircle2,
-  Circle,
-  AlertCircle,
-  Users,
-  ExternalLink
-} from 'lucide-react'
+import { useState } from 'react'
+import { CheckSquare, FileText, ClipboardCheck, Calendar, BookOpen, Users, LogOut, ExternalLink, Clock, AlertCircle, Circle, CheckCircle2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-// Document definitions
-const documents = [
-  { id: 'research-brief', filename: 'research-brief.md', title: 'Research Brief', status: 'v1 complete' },
-  { id: 'project-plan', filename: 'project-plan.md', title: 'Project Plan', status: 'Living document' },
-  { id: 'ideathon-submission', filename: 'ideathon-submission.md', title: 'Subnet Design Proposal', status: 'In progress' },
-  { id: 'business-analysis', filename: 'business-analysis.md', title: 'Strategic Business Analysis', status: 'Internal reference' },
-  { id: 'ideathon-requirements', filename: 'ideathon-requirements.md', title: 'Ideathon Requirements', status: 'Reference' },
-  { id: 'punchlist', filename: 'punchlist.md', title: 'Punch List — Feb 13', status: 'Active' },
-]
-
-// Task data
-const tasks = {
-  todo: [
-    { id: 1, title: 'Create X/Twitter account', assignee: 'Drew', priority: 'high' },
-    { id: 2, title: 'Register team on HackQuest', assignee: 'Drew', priority: 'high' },
-    { id: 3, title: 'Contact technical co-founder candidate', assignee: 'Drew', priority: 'high' },
-    { id: 4, title: 'Fill research gaps with analyst sprint', assignee: 'Doug', priority: 'high' },
+// === DATA ===
+const TASKS = {
+  backlog: [
+    { title: 'Create X/Twitter account', owner: 'Drew', priority: 'high' },
+    { title: 'Contact dev co-founder', owner: 'Drew', priority: 'high' },
+    { title: 'Draft Go-To-Market section', owner: 'Doug', priority: 'high' },
+    { title: 'Script explanation video', owner: 'Doug', priority: 'medium' },
+    { title: 'Draft pitch deck content', owner: 'Doug', priority: 'medium' },
+    { title: 'Publish X introduction post', owner: 'Drew', priority: 'medium' },
+    { title: 'Record explanation video', owner: 'Drew', priority: 'medium' },
+    { title: 'Submit on HackQuest', owner: 'Drew', priority: 'high' },
+    { title: 'Send proposal to experts', owner: 'Drew', priority: 'medium' },
   ],
   inProgress: [
-    { id: 5, title: 'Restructure proposal outline', assignee: 'Doug', priority: 'high' },
-    { id: 6, title: 'Landing page Mission Control', assignee: 'Developer', priority: 'high' },
-    { id: 7, title: 'Review friend feedback on strategy', assignee: 'Doug', priority: 'medium' },
+    { title: 'Fill research gaps', owner: 'Doug', priority: 'high' },
+    { title: 'Restructure proposal', owner: 'Doug', priority: 'high' },
+    { title: 'Landing page polish', owner: 'Dev Agent', priority: 'medium' },
+    { title: 'Mission Control v2', owner: 'Dev Agent', priority: 'high' },
+    { title: 'Hero headline options', owner: 'Doug', priority: 'medium' },
   ],
   done: [
-    { id: 8, title: 'Read all existing docs', assignee: 'Doug', priority: 'done' },
-    { id: 9, title: 'Analyze ideathon requirements', assignee: 'Doug', priority: 'done' },
-    { id: 10, title: 'Establish agent team structure', assignee: 'Doug', priority: 'done' },
-    { id: 11, title: 'Landing page v1 live on Vercel', assignee: 'Developer', priority: 'done' },
-  ]
+    { title: 'Read & analyze proposal docs', owner: 'Doug' },
+    { title: 'Analyze ideathon requirements', owner: 'Doug' },
+    { title: 'Build landing page v1', owner: 'Dev Agent' },
+    { title: 'Research brief v1', owner: 'Lead Analyst' },
+    { title: 'Master project plan', owner: 'Doug' },
+    { title: 'Deploy site on Vercel', owner: 'Dev Agent' },
+    { title: 'Build Mission Control v1', owner: 'Dev Agent' },
+    { title: 'Landing page redesign', owner: 'Dev Agent' },
+    { title: 'Context file cleanup', owner: 'Doug' },
+    { title: 'Logo design', owner: 'Drew' },
+    { title: 'Expert feedback integration', owner: 'Doug' },
+  ],
 }
 
-// Sprint data
-const sprintDays = 13 // Days remaining until Feb 25
-
-// Team members
-const team = [
-  { name: 'Doug', role: 'PM / Chief of Staff', status: 'Active', avatar: '🦬' },
-  { name: 'Drew', role: 'Founder', status: 'Active', avatar: '🎯' },
-  { name: 'Lead Analyst', role: 'Research', status: 'Running', avatar: '🔍' },
-  { name: 'Developer', role: 'Web / UI', status: 'Running', avatar: '💻' },
-  { name: 'Marketing', role: 'Content / Social', status: 'Pending', avatar: '📢' },
+const CONTENT = [
+  { title: 'Subnet Design Proposal', version: 'v0', status: 'In Progress', owner: 'Doug', note: 'needs restructure' },
+  { title: 'Pitch Deck (10 pages)', version: '--', status: 'Not Started', owner: 'Doug' },
+  { title: 'Explainer Video Script', version: '--', status: 'Not Started', owner: 'Doug' },
+  { title: 'X/Twitter Launch Post', version: '--', status: 'Blocked', owner: 'Marketing', note: 'no X account yet' },
+  { title: 'Landing Page Copy', version: 'v2', status: 'In Review', owner: 'Drew + Doug' },
+  { title: 'Research Brief', version: 'v1', status: 'Complete', owner: 'Lead Analyst' },
 ]
 
+const APPROVALS = [
+  { title: 'Brand direction (dark fintech)', status: 'Locked', badge: 'locked' },
+  { title: 'Manifesto line', status: 'Approved', badge: 'approved' },
+  { title: 'Hero headline', status: 'Needs Revision', badge: 'revision' },
+  { title: 'Landing page sign-off', status: 'In Review', badge: 'review' },
+  { title: 'Proposal outline', status: 'Pending', badge: 'pending' },
+  { title: 'Dev co-founder candidate', status: 'Waiting on Drew', badge: 'waiting' },
+]
+
+const CALENDAR = [
+  { date: 'Feb 12', day: 'Wed', past: true, items: ['First boot, met Drew', 'Deployed landing page', 'Research brief v1'], milestone: null },
+  { date: 'Feb 13', day: 'Thu', today: true, items: ['Mission Control v2', 'Hero headline options', 'Landing page polish'], milestone: null },
+  { date: 'Feb 14', day: 'Fri', items: ['Content review', 'Fill research gaps'], milestone: null },
+  { date: 'Feb 15-16', day: 'Weekend', items: ['Video script draft', 'Pitch deck draft'], milestone: null },
+  { date: 'Feb 17', day: 'Mon', items: ['Contact dev co-founder', 'Draft GTM section'], milestone: null },
+  { date: 'Feb 18', day: 'Tue', items: ['Proposal restructure complete'], milestone: null },
+  { date: 'Feb 19', day: 'Wed', items: ['Send proposal to domain experts'], milestone: null },
+  { date: 'Feb 20', day: 'Thu', items: ['Integrate expert feedback'], milestone: null },
+  { date: 'Feb 21', day: 'Fri', items: ['Final proposal polish', 'All drafts complete'], milestone: 'DRAFTS COMPLETE' },
+  { date: 'Feb 22-23', day: 'Weekend', items: ['Record explainer video', 'Final asset prep'], milestone: null },
+  { date: 'Feb 24', day: 'Mon', items: ['Final review cycle'], milestone: null },
+  { date: 'Feb 25', day: 'Tue', items: ['SUBMIT TO HACKQUEST'], milestone: 'DEADLINE' },
+]
+
+const DOCS = [
+  { id: 'research-brief', title: 'Research Brief', desc: 'Market analysis & Bittensor landscape' },
+  { id: 'project-plan', title: 'Project Plan', desc: 'Master roadmap and sprint planning' },
+  { id: 'ideathon-submission', title: 'Subnet Design Proposal', desc: 'Ideathon submission document' },
+  { id: 'business-analysis', title: 'Business Analysis', desc: 'Strategic assessment' },
+  { id: 'ideathon-requirements', title: 'Ideathon Requirements', desc: 'Official submission guidelines' },
+  { id: 'punchlist', title: 'Punch List', desc: 'Active task tracking' },
+]
+
+const TEAM = [
+  { name: 'Doug', role: 'PM / Chief of Staff', model: 'Claude Opus 4', status: 'active', task: 'Coordinating all workstreams' },
+  { name: 'Lead Analyst', role: 'Research', model: 'Kimi K2.5', status: 'idle', task: 'Research brief v1 delivered' },
+  { name: 'Developer', role: 'Frontend', model: 'Kimi K2.5', status: 'active', task: 'Mission Control v2 build' },
+  { name: 'Marketing', role: 'Content & Social', model: 'Kimi K2.5', status: 'pending', task: 'Waiting for initialization' },
+  { name: 'Drew Stohl', role: 'Founder', model: 'Human', status: 'active', task: 'Direction, feedback, approvals' },
+]
+
+const ACTIVITY = [
+  { who: 'Dev Agent', what: 'Particles changed to light grey', when: '30 min ago' },
+  { who: 'Dev Agent', what: 'Unified all blues to ice blue', when: '45 min ago' },
+  { who: 'Dev Agent', what: 'Fixed login page styling', when: '1 hour ago' },
+  { who: 'Drew', what: 'Sent logo design', when: '10 hours ago' },
+  { who: 'Doug', what: 'Updated manifesto line', when: '10 hours ago' },
+  { who: 'Dev Agent', what: 'Landing page full redesign', when: '11 hours ago' },
+  { who: 'Doug', what: 'Created project plan', when: '12 hours ago' },
+  { who: 'Lead Analyst', what: 'Delivered research brief', when: '12 hours ago' },
+  { who: 'Dev Agent', what: 'Deployed landing page', when: '13 hours ago' },
+  { who: 'Doug', what: 'First boot, met Drew', when: '13 hours ago' },
+]
+
+// === VIEWS ===
+type View = 'tasks' | 'content' | 'approvals' | 'calendar' | 'docs' | 'team'
+
+const NAV: { id: View; label: string; icon: any }[] = [
+  { id: 'tasks', label: 'Tasks', icon: CheckSquare },
+  { id: 'content', label: 'Content', icon: FileText },
+  { id: 'approvals', label: 'Approvals', icon: ClipboardCheck },
+  { id: 'calendar', label: 'Calendar', icon: Calendar },
+  { id: 'docs', label: 'Docs', icon: BookOpen },
+  { id: 'team', label: 'Team', icon: Users },
+]
+
+// Priority badge
+function PBadge({ p }: { p: string }) {
+  const c = p === 'high' ? 'bg-red-500/20 text-red-400' : p === 'medium' ? 'bg-amber-500/20 text-amber-400' : 'bg-white/10 text-[#64748B]'
+  return <span className={`text-xs px-2 py-0.5 rounded ${c}`}>{p}</span>
+}
+
+// Status badge
+function SBadge({ s }: { s: string }) {
+  const m: Record<string, string> = {
+    'Complete': 'bg-emerald-500/20 text-emerald-400', 'Approved': 'bg-emerald-500/20 text-emerald-400', 'Locked': 'bg-purple-500/20 text-purple-400',
+    'In Progress': 'bg-[#38BDF8]/20 text-[#38BDF8]', 'In Review': 'bg-[#38BDF8]/20 text-[#38BDF8]',
+    'Not Started': 'bg-white/10 text-[#64748B]', 'Pending': 'bg-amber-500/20 text-amber-400',
+    'Blocked': 'bg-red-500/20 text-red-400', 'Needs Revision': 'bg-amber-500/20 text-amber-400',
+    'Waiting on Drew': 'bg-orange-500/20 text-orange-400',
+  }
+  return <span className={`text-xs px-2 py-0.5 rounded ${m[s] || 'bg-white/10 text-[#64748B]'}`}>{s}</span>
+}
+
+// Card wrapper
+function Card({ children, className = '', ...rest }: { children: React.ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={`bg-[#141D2F] border border-[#1E2A42] rounded-lg ${className}`} {...rest}>{children}</div>
+}
+
+// Task card
+function TaskCard({ t }: { t: { title: string; owner: string; priority?: string } }) {
+  return (
+    <Card className="p-3">
+      <h4 className="text-sm font-medium text-[#F1F5F9] mb-2">{t.title}</h4>
+      <div className="flex items-center justify-between">
+        {t.priority ? <PBadge p={t.priority} /> : <span />}
+        <span className="text-xs text-[#64748B]">{t.owner}</span>
+      </div>
+    </Card>
+  )
+}
+
 export default function MissionControl() {
-  const [activeView, setActiveView] = useState<'dashboard' | 'document'>('dashboard')
-  const [selectedDoc, setSelectedDoc] = useState<typeof documents[0] | null>(null)
-  const [docContent, setDocContent] = useState<string>('')
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [docsExpanded, setDocsExpanded] = useState(true)
+  const [view, setView] = useState<View>('tasks')
+  const [docId, setDocId] = useState<string | null>(null)
+  const [docContent, setDocContent] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Calculate days remaining
-  const targetDate = new Date('2026-02-25')
-  const today = new Date()
-  const daysRemaining = Math.max(0, Math.ceil((targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
-
-  // Load document content
-  const loadDocument = async (doc: typeof documents[0]) => {
+  const loadDoc = async (id: string) => {
     setLoading(true)
     try {
-      const response = await fetch(`/docs/${doc.filename}`)
-      const content = await response.text()
-      setDocContent(content)
-      setSelectedDoc(doc)
-      setActiveView('document')
-      setSidebarOpen(false) // Close sidebar on mobile after selection
-    } catch (error) {
-      console.error('Failed to load document:', error)
-      setDocContent('# Error\n\nFailed to load document.')
-    } finally {
-      setLoading(false)
-    }
+      const r = await fetch(`/docs/${id}.md`)
+      setDocContent(await r.text())
+      setDocId(id)
+    } catch { setDocContent('# Error loading document') }
+    setLoading(false)
   }
 
-  // Back to dashboard
-  const backToDashboard = () => {
-    setActiveView('dashboard')
-    setSelectedDoc(null)
-    setDocContent('')
-  }
-
-  // Logout
-  const handleLogout = () => {
+  const logout = () => {
     document.cookie = 'as-auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     window.location.href = '/login'
   }
 
-  // Status badge color
-  const getStatusColor = (status: string) => {
-    const s = status.toLowerCase()
-    if (s.includes('complete') || s.includes('done') || s.includes('active')) return 'bg-green-500/20 text-green-400 border-green-500/30'
-    if (s.includes('progress') || s.includes('running')) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-    if (s.includes('pending')) return 'bg-red-500/20 text-red-400 border-red-500/30'
-    return 'bg-white/10 text-as-muted border-white/10'
-  }
-
-  // Priority badge color
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-500/20 text-red-400'
-      case 'medium': return 'bg-yellow-500/20 text-yellow-400'
-      case 'done': return 'bg-green-500/20 text-green-400'
-      default: return 'bg-white/10 text-as-muted'
-    }
-  }
+  const total = TASKS.backlog.length + TASKS.inProgress.length + TASKS.done.length
+  const pct = Math.round((TASKS.done.length / total) * 100)
 
   return (
-    <div className="min-h-screen bg-as-dark flex">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
+    <div className="min-h-screen bg-[#0A0F1A] flex">
       {/* Sidebar */}
-      <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 bg-as-navy border-r border-white/10
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        flex flex-col
-      `}>
-        {/* Logo */}
-        <div className="p-4 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-as-accent flex items-center justify-center flex-shrink-0">
-              <Activity className="w-6 h-6 text-as-dark" />
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">AgentScore</h1>
-              <p className="text-xs text-as-muted">Mission Control</p>
-            </div>
-          </div>
+      <aside className="fixed inset-y-0 left-0 w-52 bg-[#0A0F1A] border-r border-[#1E2A42] flex flex-col z-20">
+        <div className="h-14 flex items-center px-5 border-b border-[#1E2A42]">
+          <span className="font-bold text-[#F1F5F9] text-lg">AgentScore</span>
         </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {/* Dashboard */}
-          <button
-            onClick={() => {
-              backToDashboard()
-              setSidebarOpen(false)
-            }}
-            className={`
-              w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all
-              ${activeView === 'dashboard' 
-                ? 'bg-white/10 border-l-2 border-as-accent text-white' 
-                : 'text-as-muted hover:bg-white/5 hover:text-white border-l-2 border-transparent'}
-            `}
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            <span>Dashboard</span>
-          </button>
-
-          {/* Documents with expand */}
-          <div>
-            <button
-              onClick={() => setDocsExpanded(!docsExpanded)}
-              className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all
-                ${activeView === 'document' 
-                  ? 'bg-white/10 border-l-2 border-as-accent text-white' 
-                  : 'text-as-muted hover:bg-white/5 hover:text-white border-l-2 border-transparent'}
-              `}
-            >
-              <FileText className="w-5 h-5" />
-              <span className="flex-1">Documents</span>
-              {docsExpanded ? (
-                <ChevronDown className="w-4 h-4" />
-              ) : (
-                <ChevronRight className="w-4 h-4" />
-              )}
+        <nav className="flex-1 py-3">
+          {NAV.map(n => (
+            <button key={n.id} onClick={() => { setView(n.id); setDocId(null) }}
+              className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm transition-all ${
+                view === n.id ? 'border-l-2 border-[#38BDF8] bg-white/5 text-[#F1F5F9]' : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-white/5'
+              }`}>
+              <n.icon className="w-4 h-4" />{n.label}
             </button>
-
-            {/* Document list */}
-            {docsExpanded && (
-              <div className="mt-1 ml-4 space-y-1">
-                {documents.map((doc) => (
-                  <button
-                    key={doc.id}
-                    onClick={() => loadDocument(doc)}
-                    className={`
-                      w-full flex items-center gap-2 px-4 py-2 rounded-lg text-left text-sm transition-all
-                      ${selectedDoc?.id === doc.id
-                        ? 'bg-as-accent/20 text-as-accent border-l-2 border-as-accent' 
-                        : 'text-as-muted hover:bg-white/5 hover:text-white border-l-2 border-transparent'}
-                    `}
-                  >
-                    <span className="truncate flex-1">{doc.title}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          ))}
         </nav>
-
-        {/* Logout */}
-        <div className="p-4 border-t border-white/10">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-as-muted hover:bg-white/5 hover:text-red-400 transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
+        <div className="p-4 border-t border-[#1E2A42]">
+          <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-[#94A3B8] hover:text-[#F1F5F9] text-sm transition-all">
+            <LogOut className="w-4 h-4" />Logout
           </button>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 min-w-0 overflow-hidden">
-        {/* Mobile header */}
-        <header className="lg:hidden bg-as-navy border-b border-white/10 p-4 flex items-center gap-4">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg bg-white/5 text-as-muted hover:text-white"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <div className="flex items-center gap-2">
-            <Activity className="w-6 h-6 text-as-accent" />
-            <span className="font-bold text-white">AgentScore</span>
-          </div>
+      {/* Main */}
+      <main className="flex-1 ml-52 mr-64">
+        <header className="h-14 flex items-center justify-between border-b border-[#1E2A42] px-6 bg-[#0A0F1A]/95 backdrop-blur sticky top-0 z-10">
+          <span className="text-[#F1F5F9] font-semibold">Mission Control</span>
+          <a href="/" className="text-[#94A3B8] hover:text-[#38BDF8] text-sm flex items-center gap-2">
+            <ExternalLink className="w-4 h-4" />Back to Site
+          </a>
         </header>
 
-        {/* Content area */}
-        <div className="h-[calc(100vh-64px)] lg:h-screen overflow-y-auto">
-          {activeView === 'dashboard' ? (
-            <div className="p-6 lg:p-8 space-y-8">
-              {/* Page header */}
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Dashboard</h2>
-                <p className="text-as-muted">Bittensor Ideathon Sprint — Feb 25 Deadline</p>
+        <div className="p-6">
+          {/* TASKS */}
+          {view === 'tasks' && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-4 gap-3">
+                {[
+                  ['Backlog', TASKS.backlog.length, '#F1F5F9'],
+                  ['In Progress', TASKS.inProgress.length, '#38BDF8'],
+                  ['Done', TASKS.done.length, '#10B981'],
+                  ['Completion', pct + '%', '#10B981'],
+                ].map(([l, v, c]) => (
+                  <Card key={l as string} className="p-4">
+                    <p className="text-[#64748B] text-xs mb-1">{l as string}</p>
+                    <p className="text-xl font-bold" style={{ color: c as string }}>{v as string}</p>
+                  </Card>
+                ))}
               </div>
-
-              {/* Stats row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Days remaining */}
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-as-accent/10 flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-as-accent" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">{daysRemaining}</p>
-                      <p className="text-sm text-as-muted">Days Remaining</p>
-                    </div>
-                  </div>
+              <div className="grid grid-cols-3 gap-4">
+                {/* Backlog */}
+                <div>
+                  <h3 className="text-[#F1F5F9] font-medium mb-3">Backlog <span className="text-[#64748B] text-sm ml-1">{TASKS.backlog.length}</span></h3>
+                  <div className="space-y-2">{TASKS.backlog.map((t, i) => <TaskCard key={i} t={t} />)}</div>
                 </div>
-
-                {/* Sprint progress */}
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                      <Target className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">4/6</p>
-                      <p className="text-sm text-as-muted">Deliverables in Progress</p>
-                    </div>
-                  </div>
+                {/* In Progress */}
+                <div>
+                  <h3 className="text-[#F1F5F9] font-medium mb-3">In Progress <span className="text-[#64748B] text-sm ml-1">{TASKS.inProgress.length}</span></h3>
+                  <div className="space-y-2">{TASKS.inProgress.map((t, i) => <TaskCard key={i} t={t} />)}</div>
                 </div>
-
-                {/* Tasks status */}
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
-                      <CheckCircle2 className="w-6 h-6 text-green-400" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">{tasks.done.length}</p>
-                      <p className="text-sm text-as-muted">Tasks Completed</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Task tracker */}
-              <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-white/10">
-                  <h3 className="font-semibold text-white flex items-center gap-2">
-                    <Target className="w-5 h-5 text-as-accent" />
-                    Task Tracker
-                  </h3>
-                </div>
-                <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
-                  {/* To Do */}
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Circle className="w-4 h-4 text-red-400" />
-                      <h4 className="font-medium text-white">To Do</h4>
-                      <span className="ml-auto text-xs bg-white/10 text-as-muted px-2 py-1 rounded">
-                        {tasks.todo.length}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {tasks.todo.map((task) => (
-                        <div 
-                          key={task.id}
-                          className="p-3 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 transition-all"
-                        >
-                          <p className="text-sm text-white mb-2">{task.title}</p>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-xs px-2 py-0.5 rounded ${getPriorityColor(task.priority)}`}>
-                              {task.priority}
-                            </span>
-                            <span className="text-xs text-as-muted">{task.assignee}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* In Progress */}
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertCircle className="w-4 h-4 text-yellow-400" />
-                      <h4 className="font-medium text-white">In Progress</h4>
-                      <span className="ml-auto text-xs bg-white/10 text-as-muted px-2 py-1 rounded">
-                        {tasks.inProgress.length}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {tasks.inProgress.map((task) => (
-                        <div 
-                          key={task.id}
-                          className="p-3 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 transition-all"
-                        >
-                          <p className="text-sm text-white mb-2">{task.title}</p>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-xs px-2 py-0.5 rounded ${getPriorityColor(task.priority)}`}>
-                              {task.priority}
-                            </span>
-                            <span className="text-xs text-as-muted">{task.assignee}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Done */}
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <CheckCircle2 className="w-4 h-4 text-green-400" />
-                      <h4 className="font-medium text-white">Done</h4>
-                      <span className="ml-auto text-xs bg-white/10 text-as-muted px-2 py-1 rounded">
-                        {tasks.done.length}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {tasks.done.map((task) => (
-                        <div 
-                          key={task.id}
-                          className="p-3 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 transition-all opacity-60"
-                        >
-                          <p className="text-sm text-white line-through mb-2">{task.title}</p>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-xs px-2 py-0.5 rounded ${getPriorityColor(task.priority)}`}>
-                              {task.priority}
-                            </span>
-                            <span className="text-xs text-as-muted">{task.assignee}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Documents section */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-white flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-as-accent" />
-                    Documents
-                  </h3>
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {documents.map((doc) => (
-                    <button
-                      key={doc.id}
-                      onClick={() => loadDocument(doc)}
-                      className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-as-accent/50 transition-all text-left group"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-as-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-as-accent/20 transition-colors">
-                          <FileText className="w-5 h-5 text-as-accent" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-white truncate group-hover:text-as-accent transition-colors">
-                            {doc.title}
-                          </h4>
-                          <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded border ${getStatusColor(doc.status)}`}>
-                            {doc.status}
-                          </span>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-as-muted opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Team section */}
-              <div>
-                <h3 className="font-semibold text-white flex items-center gap-2 mb-4">
-                  <Users className="w-5 h-5 text-as-accent" />
-                  Team
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {team.map((member) => (
-                    <div
-                      key={member.name}
-                      className="p-4 rounded-xl bg-white/5 border border-white/10 text-center"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-3 text-2xl">
-                        {member.avatar}
-                      </div>
-                      <h4 className="font-medium text-white">{member.name}</h4>
-                      <p className="text-xs text-as-muted mt-1">{member.role}</p>
-                      <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded border ${getStatusColor(member.status)}`}>
-                        {member.status}
-                      </span>
-                    </div>
-                  ))}
+                {/* Done */}
+                <div>
+                  <h3 className="text-[#F1F5F9] font-medium mb-3">Done <span className="text-[#64748B] text-sm ml-1">{TASKS.done.length}</span></h3>
+                  <div className="space-y-2">{TASKS.done.map((t, i) => (
+                    <Card key={i} className="p-3 opacity-60">
+                      <h4 className="text-sm text-[#F1F5F9] line-through mb-1">{t.title}</h4>
+                      <span className="text-xs text-[#64748B]">{t.owner}</span>
+                    </Card>
+                  ))}</div>
                 </div>
               </div>
             </div>
-          ) : (
-            /* Document view */
-            <div className="h-full flex flex-col">
-              {/* Document header */}
-              <div className="p-4 lg:p-6 border-b border-white/10 flex items-center gap-4 sticky top-0 bg-as-dark/95 backdrop-blur z-10">
-                <button
-                  onClick={backToDashboard}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-as-muted hover:text-white hover:border-as-accent/50 transition-all"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </button>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-semibold text-white truncate">
-                    {selectedDoc?.title}
-                  </h2>
-                  <p className="text-sm text-as-muted">{selectedDoc?.filename}</p>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded border ${getStatusColor(selectedDoc?.status || '')}`}>
-                  {selectedDoc?.status}
-                </span>
-              </div>
+          )}
 
-              {/* Document content */}
-              <div className="flex-1 p-4 lg:p-8 overflow-y-auto">
-                {loading ? (
-                  <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin w-8 h-8 border-2 border-as-accent border-t-transparent rounded-full" />
+          {/* CONTENT */}
+          {view === 'content' && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Content Library</h2>
+              <div className="space-y-3">
+                {CONTENT.map((c, i) => (
+                  <Card key={i} className="p-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-[#F1F5F9] font-medium">{c.title}</h3>
+                      <div className="flex items-center gap-3 mt-1 text-sm">
+                        <span className="text-[#38BDF8]">{c.version}</span>
+                        {c.note && <span className="text-[#94A3B8]">({c.note})</span>}
+                        <span className="text-[#64748B]">{c.owner}</span>
+                      </div>
+                    </div>
+                    <SBadge s={c.status} />
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* APPROVALS */}
+          {view === 'approvals' && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Approvals & Decisions</h2>
+              <div className="space-y-3">
+                {APPROVALS.map((a, i) => (
+                  <Card key={i} className="p-4 flex items-center justify-between">
+                    <h3 className="text-[#F1F5F9] font-medium">{a.title}</h3>
+                    <SBadge s={a.status} />
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CALENDAR */}
+          {view === 'calendar' && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Sprint Timeline</h2>
+              <div className="space-y-2">
+                {CALENDAR.map((d, i) => (
+                  <Card key={i} className={`p-4 ${d.today ? 'border-l-2 border-l-[#38BDF8]' : ''} ${d.past ? 'opacity-50' : ''}`}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`font-semibold ${d.today ? 'text-[#38BDF8]' : 'text-[#F1F5F9]'}`}>{d.date}</span>
+                      <span className="text-[#64748B] text-sm">{d.day}</span>
+                      {d.milestone && (
+                        <span className={`ml-auto text-xs px-2 py-0.5 rounded ${d.milestone === 'DEADLINE' ? 'bg-red-500/20 text-red-400' : 'bg-purple-500/20 text-purple-400'}`}>
+                          {d.milestone}
+                        </span>
+                      )}
+                    </div>
+                    <ul className="space-y-0.5">
+                      {d.items.map((item, j) => <li key={j} className="text-sm text-[#94A3B8]">• {item}</li>)}
+                    </ul>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* DOCS */}
+          {view === 'docs' && !docId && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Documents</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {DOCS.map(d => (
+                  <Card key={d.id} className="p-4 cursor-pointer hover:border-[#38BDF8]/50 transition-colors" onClick={() => loadDoc(d.id)}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <BookOpen className="w-5 h-5 text-[#38BDF8]" />
+                      <h3 className="text-[#F1F5F9] font-medium">{d.title}</h3>
+                    </div>
+                    <p className="text-sm text-[#94A3B8]">{d.desc}</p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+          {view === 'docs' && docId && (
+            <div>
+              <button onClick={() => setDocId(null)} className="text-[#94A3B8] hover:text-[#38BDF8] text-sm mb-4 flex items-center gap-1">
+                ← Back to Documents
+              </button>
+              {loading ? (
+                <p className="text-[#64748B]">Loading...</p>
+              ) : (
+                <Card className="p-6">
+                  <div className="prose prose-invert max-w-none prose-headings:text-[#F1F5F9] prose-p:text-[#94A3B8] prose-strong:text-[#F1F5F9] prose-code:text-[#38BDF8]">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{docContent}</ReactMarkdown>
                   </div>
-                ) : (
-                  <div className="max-w-4xl mx-auto prose prose-invert prose-cyan">
-                    <ReactMarkdown 
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h1: ({ children }) => <h1 className="text-3xl font-bold text-white mb-6 pb-4 border-b border-white/10">{children}</h1>,
-                        h2: ({ children }) => <h2 className="text-2xl font-bold text-white mt-10 mb-4">{children}</h2>,
-                        h3: ({ children }) => <h3 className="text-xl font-bold text-white mt-8 mb-3">{children}</h3>,
-                        h4: ({ children }) => <h4 className="text-lg font-semibold text-white mt-6 mb-2">{children}</h4>,
-                        p: ({ children }) => <p className="text-as-muted leading-relaxed mb-4">{children}</p>,
-                        a: ({ children, href }) => <a href={href} className="text-as-accent hover:text-as-accent-hover underline">{children}</a>,
-                        code: ({ children, className }) => {
-                          const isInline = !className
-                          return isInline ? (
-                            <code className="bg-white/10 px-1.5 py-0.5 rounded text-sm text-as-accent">{children}</code>
-                          ) : (
-                            <pre className="bg-white/5 border border-white/10 rounded-lg p-4 overflow-x-auto mb-4">
-                              <code className={`${className} text-sm`}>{children}</code>
-                            </pre>
-                          )
-                        },
-                        ul: ({ children }) => <ul className="list-disc list-inside text-as-muted space-y-1 mb-4 ml-4">{children}</ul>,
-                        ol: ({ children }) => <ol className="list-decimal list-inside text-as-muted space-y-1 mb-4 ml-4">{children}</ol>,
-                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                        blockquote: ({ children }) => (
-                          <blockquote className="border-l-4 border-as-accent pl-4 italic text-as-muted my-4">
-                            {children}
-                          </blockquote>
-                        ),
-                        table: ({ children }) => (
-                          <div className="overflow-x-auto mb-4">
-                            <table className="w-full border border-white/10 rounded-lg overflow-hidden">
-                              {children}
-                            </table>
-                          </div>
-                        ),
-                        thead: ({ children }) => <thead className="bg-white/5">{children}</thead>,
-                        tbody: ({ children }) => <tbody>{children}</tbody>,
-                        tr: ({ children }) => <tr className="border-b border-white/10 last:border-0">{children}</tr>,
-                        th: ({ children }) => <th className="text-left px-4 py-3 font-semibold text-white">{children}</th>,
-                        td: ({ children }) => <td className="px-4 py-3 text-as-muted">{children}</td>,
-                        hr: () => <hr className="border-white/10 my-8" />,
-                      }}
-                    >
-                      {docContent}
-                    </ReactMarkdown>
-                  </div>
-                )}
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* TEAM */}
+          {view === 'team' && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Team Roster</h2>
+              <div className="space-y-3">
+                {TEAM.map((m, i) => (
+                  <Card key={i} className="p-4 flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                      m.status === 'active' ? 'bg-[#38BDF8]/20 text-[#38BDF8]' : m.status === 'idle' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-[#64748B]'
+                    }`}>
+                      {m.name[0]}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-[#F1F5F9] font-medium">{m.name}</h3>
+                        <span className="text-xs text-[#64748B]">{m.model}</span>
+                      </div>
+                      <p className="text-sm text-[#94A3B8]">{m.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <SBadge s={m.status === 'active' ? 'In Progress' : m.status === 'idle' ? 'Complete' : 'Pending'} />
+                      <p className="text-xs text-[#64748B] mt-1">{m.task}</p>
+                    </div>
+                  </Card>
+                ))}
               </div>
             </div>
           )}
         </div>
       </main>
+
+      {/* Right Sidebar - Activity Feed */}
+      <aside className="fixed inset-y-0 right-0 w-64 bg-[#0A0F1A] border-l border-[#1E2A42] z-20">
+        <div className="h-14 flex items-center px-5 border-b border-[#1E2A42]">
+          <span className="text-[#F1F5F9] font-semibold text-sm">Activity</span>
+        </div>
+        <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-3.5rem)]">
+          {ACTIVITY.map((a, i) => (
+            <div key={i} className="border-l-2 border-[#1E2A42] pl-3">
+              <p className="text-sm text-[#F1F5F9]"><span className="text-[#38BDF8]">{a.who}</span></p>
+              <p className="text-xs text-[#94A3B8]">{a.what}</p>
+              <p className="text-xs text-[#64748B] mt-0.5">{a.when}</p>
+            </div>
+          ))}
+        </div>
+      </aside>
     </div>
   )
 }
