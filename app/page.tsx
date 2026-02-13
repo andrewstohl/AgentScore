@@ -230,7 +230,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <FadeInSection>
             <p className="font-display text-2xl sm:text-3xl lg:text-4xl text-as-text leading-tight">
-              The trust layer for autonomous commerce should not be owned by the platforms it rates.
+              When machines spend money, trust can&apos;t be a feature. It has to be the foundation.
             </p>
           </FadeInSection>
         </div>
