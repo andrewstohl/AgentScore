@@ -12,10 +12,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/mission-control', request.url))
   }
   
-  if (pathname === '/docs' || pathname.startsWith('/docs/')) {
-    return NextResponse.redirect(new URL('/mission-control', request.url))
-  }
-
   // Only protect /mission-control routes
   const isProtectedRoute = pathname === '/mission-control' || pathname.startsWith('/mission-control/')
 
@@ -45,7 +41,5 @@ export const config = {
     '/mission-control/:path*',
     '/dashboard',
     '/dashboard/:path*',
-    '/docs',
-    '/docs/:path*',
   ],
 }
