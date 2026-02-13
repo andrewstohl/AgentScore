@@ -104,7 +104,7 @@ const ACTIVITY = [
 ]
 
 // === VIEWS ===
-type View = 'tasks' | 'content' | 'approvals' | 'calendar' | 'docs' | 'team'
+type View = 'tasks' | 'content' | 'approvals' | 'calendar' | 'docs' | 'team' | 'activity'
 
 const NAV: { id: View; label: string; icon: any }[] = [
   { id: 'tasks', label: 'Tasks', icon: CheckSquare },
@@ -113,6 +113,7 @@ const NAV: { id: View; label: string; icon: any }[] = [
   { id: 'calendar', label: 'Calendar', icon: Calendar },
   { id: 'docs', label: 'Docs', icon: BookOpen },
   { id: 'team', label: 'Team', icon: Users },
+  { id: 'activity', label: 'Activity', icon: Clock },
 ]
 
 // Priority badge
@@ -200,7 +201,7 @@ export default function MissionControl() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 ml-52 mr-64">
+      <main className="flex-1 ml-52">
         <header className="h-14 flex items-center justify-between border-b border-[#1E2A42] px-6 bg-[#0A0F1A]/95 backdrop-blur sticky top-0 z-10">
           <span className="text-[#F1F5F9] font-semibold">Mission Control</span>
           <a href="/" className="text-[#94A3B8] hover:text-[#38BDF8] text-sm flex items-center gap-2">
@@ -346,6 +347,24 @@ export default function MissionControl() {
             </div>
           )}
 
+          {/* ACTIVITY */}
+          {view === 'activity' && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-[#F1F5F9]">Activity Log</h2>
+              <div className="space-y-3">
+                {ACTIVITY.map((a, i) => (
+                  <Card key={i} className="p-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-[#38BDF8]">{a.who}</span>
+                      <span className="text-xs text-[#64748B]">{a.when}</span>
+                    </div>
+                    <p className="text-sm text-[#94A3B8]">{a.what}</p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* TEAM */}
           {view === 'team' && (
             <div className="space-y-4">
@@ -377,21 +396,7 @@ export default function MissionControl() {
         </div>
       </main>
 
-      {/* Right Sidebar - Activity Feed */}
-      <aside className="fixed inset-y-0 right-0 w-64 bg-[#0A0F1A] border-l border-[#1E2A42] z-20">
-        <div className="h-14 flex items-center px-5 border-b border-[#1E2A42]">
-          <span className="text-[#F1F5F9] font-semibold text-sm">Activity</span>
-        </div>
-        <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-3.5rem)]">
-          {ACTIVITY.map((a, i) => (
-            <div key={i} className="border-l-2 border-[#1E2A42] pl-3">
-              <p className="text-sm text-[#F1F5F9]"><span className="text-[#38BDF8]">{a.who}</span></p>
-              <p className="text-xs text-[#94A3B8]">{a.what}</p>
-              <p className="text-xs text-[#64748B] mt-0.5">{a.when}</p>
-            </div>
-          ))}
-        </div>
-      </aside>
+      {/* Right sidebar removed - activity is now a nav view */}
     </div>
   )
 }
