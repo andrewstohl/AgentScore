@@ -1,11 +1,64 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckSquare, FileText, ClipboardCheck, Calendar, Users, Clock, LogOut, ExternalLink, BookOpen, ArrowLeft } from 'lucide-react'
+import {
+  CheckSquare, FileText, ClipboardCheck, Calendar, Users, Clock, LogOut,
+  ExternalLink, FolderOpen, Folder, Download, Eye, ChevronRight, Star, ArrowLeft
+} from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-// === REAL DATA ===
+// === FILE SYSTEM ===
+interface FileItem {
+  name: string
+  file: string  // path under /docs/ (without .md) or __external__/path
+  version: string
+  status: string
+  date: string
+  size: string
+  owner: string
+}
+
+interface FolderItem {
+  name: string
+  icon?: string
+  files: FileItem[]
+}
+
+const FILE_SYSTEM: FolderItem[] = [
+  {
+    name: 'Submission Deliverables',
+    files: [
+      { name: 'Subnet Design Proposal', file: 'proposal-v3', version: 'v3', status: 'Needs Review', date: 'Feb 13', size: '21 KB', owner: 'Doug' },
+      { name: 'Pitch Deck (Slides)', file: '__external__/deck.html', version: 'v2', status: 'Needs Review', date: 'Feb 13', size: '12 KB', owner: 'Doug' },
+      { name: 'Explainer Video Scripts', file: 'video-scripts-v2', version: 'v2', status: 'Needs Review', date: 'Feb 13', size: '19 KB', owner: 'Doug' },
+      { name: 'X/Twitter Launch Posts (30)', file: 'x-posts-v2', version: 'v2', status: 'Needs Review', date: 'Feb 13', size: '8 KB', owner: 'Doug' },
+      { name: 'Hero Headline Options', file: 'hero-headline-options', version: 'v1', status: 'Needs Drew Pick', date: 'Feb 13', size: '3 KB', owner: 'Doug' },
+    ]
+  },
+  {
+    name: 'Strategy & Research',
+    files: [
+      { name: 'Gap Analysis (How to Win)', file: 'gap-analysis', version: 'v1', status: 'Complete', date: 'Feb 13', size: '24 KB', owner: 'Doug' },
+      { name: 'Competitor Analysis', file: 'competitor-analysis', version: 'v1', status: 'Complete', date: 'Feb 13', size: '18 KB', owner: 'Doug' },
+      { name: 'Winning Subnets Research', file: 'winning-subnets-research', version: 'v1', status: 'Complete', date: 'Feb 13', size: '24 KB', owner: 'Doug' },
+      { name: 'Research Brief', file: 'research-brief', version: 'v1', status: 'Complete', date: 'Feb 12', size: '25 KB', owner: 'Analyst' },
+      { name: 'Agentic Commerce Landscape', file: 'research-gaps-filled', version: 'v1', status: 'Complete', date: 'Feb 13', size: '5 KB', owner: 'Doug' },
+    ]
+  },
+  {
+    name: 'Reference / Archive',
+    files: [
+      { name: 'Business Analysis', file: 'business-analysis', version: 'v1', status: 'Reference', date: 'Feb 12', size: '44 KB', owner: 'Doug' },
+      { name: 'Previous Proposal (v2)', file: 'proposal-v2', version: 'v2', status: 'Superseded', date: 'Feb 13', size: '31 KB', owner: 'Doug' },
+      { name: 'Original Proposal (v1)', file: 'ideathon-submission', version: 'v1', status: 'Superseded', date: 'Feb 12', size: '34 KB', owner: 'Doug' },
+      { name: 'Project Plan', file: 'project-plan', version: 'v1', status: 'Reference', date: 'Feb 12', size: '5 KB', owner: 'Doug' },
+      { name: 'Ideathon Requirements', file: 'ideathon-requirements', version: 'v1', status: 'Reference', date: 'Feb 12', size: '2 KB', owner: 'Doug' },
+    ]
+  },
+]
+
+// === TASKS ===
 const TASKS = {
   backlog: [
     { title: 'Create X/Twitter account', owner: 'Drew', priority: 'high', note: 'Required for submission' },
@@ -13,14 +66,12 @@ const TASKS = {
     { title: 'Contact dev co-founder candidate', owner: 'Drew', priority: 'high', note: 'For Round 2 testnet' },
     { title: 'Send proposal to domain experts', owner: 'Drew', priority: 'medium', note: 'External feedback' },
     { title: 'Record explainer video', owner: 'Drew', priority: 'medium', note: 'After script approval' },
-    { title: 'Spin up Marketing agent', owner: 'Doug', priority: 'medium', note: 'For content polish' },
-    { title: 'Fill research gaps', owner: 'Doug', priority: 'high', note: 'x402 endpoints, AP2, competitor scan' },
   ],
   inProgress: [
-    { title: 'Drew: review all deliverables in MC', owner: 'Drew', priority: 'high', note: 'Proposal, deck, scripts, X posts, headlines' },
+    { title: 'Drew: review all deliverables', owner: 'Drew', priority: 'high', note: 'Proposal, deck, scripts, X posts, headlines' },
     { title: 'Drew: pick hero headline', owner: 'Drew', priority: 'medium', note: '5 options ready' },
-    { title: 'Research gaps (x402, AP2, ACP details)', owner: 'Doug', priority: 'medium', note: 'Agent running' },
-    { title: 'Landing page: update hero headline', owner: 'Doug', priority: 'medium', note: 'Waiting on Drew pick' },
+    { title: 'Technical architecture analysis', owner: 'Doug', priority: 'high', note: 'Full build plan for subnet' },
+    { title: 'MC file manager rebuild', owner: 'Doug', priority: 'high', note: 'Google Drive style' },
   ],
   done: [
     { title: 'Competitor analysis (25+ companies)', owner: 'Doug' },
@@ -28,102 +79,72 @@ const TASKS = {
     { title: 'X posts v2 (30 posts, verified)', owner: 'Doug' },
     { title: 'Hero headline options (5)', owner: 'Doug' },
     { title: 'Proposal v3 (major rewrite)', owner: 'Doug' },
-    { title: 'Pitch deck rewrite (Drew\'s voice)', owner: 'Doug' },
+    { title: 'Pitch deck v2 (Drew\'s voice)', owner: 'Doug' },
     { title: 'Gap analysis', owner: 'Doug' },
     { title: 'Winning subnets research', owner: 'Doug' },
-    { title: 'HTML slide deck (/deck.html)', owner: 'Dev Agent' },
-    { title: 'Mission Control v2+v3+v4', owner: 'Doug' },
-    { title: 'Landing page redesign', owner: 'Dev Agent' },
-    { title: 'Research brief v1', owner: 'Lead Analyst' },
-    { title: 'Project plan', owner: 'Doug' },
-    { title: 'Ideathon requirements analysis', owner: 'Doug' },
-    { title: 'Expert feedback integration', owner: 'Doug' },
-    { title: 'Site deploy on Vercel', owner: 'Dev Agent' },
-    { title: 'Logo design', owner: 'Drew' },
-    { title: 'Context file cleanup', owner: 'Doug' },
+    { title: 'HTML slide deck', owner: 'Dev Agent' },
+    { title: 'Research brief v1', owner: 'Analyst' },
+    { title: 'Landing page + deploy', owner: 'Dev Agent' },
+    { title: 'Mission Control v1-v3', owner: 'Doug' },
   ],
 }
 
-const DELIVERABLES = [
-  { title: '⭐ Subnet Design Proposal', file: 'proposal-v3', version: 'v3', status: 'Needs Review', owner: 'Doug', desc: 'Major rewrite. 70% mechanism design. Math specs, anti-gaming proofs, dTAO strategy. Team section updated.' },
-  { title: '⭐ Pitch Deck (SLIDES)', file: '__external__/deck.html', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: 'Real slides in Drew\'s voice. Arrow keys to navigate. Ctrl+P to save as PDF.' },
-  { title: '⭐ Video Scripts', file: 'video-scripts-v2', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: 'Rewritten in Drew\'s voice. Two versions: "The Problem" and "The Future". 6-7 min each.' },
-  { title: '⭐ X/Twitter Posts (30)', file: 'x-posts-v2', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: '30 posts with character counts. New "Behind the Build" category. All verified under 280 chars.' },
-  { title: '⭐ Hero Headline Options', file: 'hero-headline-options', version: 'v1', status: 'Needs Drew Pick', owner: 'Doug', desc: '5 options to replace current hero headline. Modern, no "credit rating agency" framing.' },
-  { title: 'Competitor Analysis', file: 'competitor-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: '25+ companies analyzed. Direct, adjacent, and future competitors. Strategic recommendations.' },
-  { title: 'Gap Analysis', file: 'gap-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'What it takes to WIN. Weaknesses, required improvements, what to cut.' },
-  { title: 'Winning Subnets Research', file: 'winning-subnets-research', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'SN8, SN1, SN9 deep analysis. Bittensor terminology guide.' },
-  { title: 'Research Brief', file: 'research-brief', version: 'v1', status: 'Complete', owner: 'Lead Analyst', desc: 'Bittensor ecosystem, agentic commerce landscape, ideathon intel.' },
-]
-
 const APPROVALS = [
-  { title: 'Proposal v2 draft review', status: 'Needs Drew', desc: 'Read and provide feedback on restructured proposal' },
-  { title: 'Pitch deck content review', status: 'Needs Drew', desc: 'Review 10 slides, flag any messaging issues' },
+  { title: 'Proposal v3 review', status: 'Needs Drew', desc: 'Read and provide feedback' },
+  { title: 'Pitch deck review', status: 'Needs Drew', desc: 'Review slides at /deck.html' },
   { title: 'Video script selection', status: 'Needs Drew', desc: 'Pick Version A or B (or hybrid)' },
-  { title: 'X post approval (top 10)', status: 'Needs Drew', desc: 'Select which posts to queue first' },
-  { title: 'Hero headline selection', status: 'Waiting on Doug', desc: '5 options coming, Drew picks' },
-  { title: 'Brand direction', status: 'Locked', desc: 'Dark fintech, ice blue, Crypture-inspired' },
-  { title: 'Manifesto line', status: 'Locked', desc: '"When machines spend money, trust can\'t be a feature..."' },
-  { title: 'Dev co-founder', status: 'Waiting on Drew', desc: 'Drew has a candidate, needs to reach out' },
+  { title: 'X post approval', status: 'Needs Drew', desc: 'Select which posts to queue first' },
+  { title: 'Hero headline pick', status: 'Needs Drew', desc: '5 options ready, pick one' },
+  { title: 'Brand direction', status: 'Locked', desc: 'Dark fintech, ice blue' },
+  { title: 'Manifesto line', status: 'Locked', desc: '"When machines spend money..."' },
+  { title: 'Dev co-founder', status: 'Waiting on Drew', desc: 'Drew has candidate in mind' },
 ]
 
 const CALENDAR = [
-  { date: 'Feb 12', day: 'Wed', past: true, items: ['First boot, workspace setup', 'Landing page built + deployed', 'Research brief v1 delivered', 'Project plan created'] },
-  { date: 'Feb 13', day: 'Thu', today: true, items: ['Mission Control v2 shipped', 'Proposal v2 drafted', 'Pitch deck v1 drafted', 'Video scripts v1 drafted', 'X posts (25) drafted', 'Landing page polish (particles, colors)'] },
-  { date: 'Feb 14', day: 'Fri', items: ['Doug: review + clean all drafts', 'Drew: review deliverables in MC', 'Hero headline options presented', 'Fill research gaps'] },
-  { date: 'Feb 15-16', day: 'Weekend', items: ['Incorporate Drew feedback on all drafts', 'Polish proposal and deck', 'Marketing agent: content refinement'] },
-  { date: 'Feb 17', day: 'Mon', items: ['Contact dev co-founder', 'Send proposal to domain experts', 'Video script locked'] },
-  { date: 'Feb 18-19', day: 'Tue-Wed', items: ['Expert feedback integration', 'Pitch deck design (visual)'] },
+  { date: 'Feb 12', day: 'Wed', past: true, items: ['Workspace setup', 'Landing page deployed', 'Research brief v1', 'Project plan'] },
+  { date: 'Feb 13', day: 'Thu', past: true, items: ['All first drafts completed', 'Proposal v3 rewrite', 'Competitor analysis', 'MC rebuilt 3x', 'Slide deck built', 'Video scripts + X posts in Drew\'s voice'] },
+  { date: 'Feb 14', day: 'Fri', today: true, items: ['Technical architecture analysis', 'MC file manager rebuild', 'Drew reviews deliverables', 'Drew picks hero headline'] },
+  { date: 'Feb 15-16', day: 'Weekend', items: ['Incorporate Drew feedback', 'Polish all deliverables', 'Video script locked'] },
+  { date: 'Feb 17', day: 'Mon', items: ['Contact dev co-founder', 'Send proposal to experts'] },
+  { date: 'Feb 18-19', day: 'Tue-Wed', items: ['Expert feedback integration', 'Final content polish'] },
   { date: 'Feb 20', day: 'Thu', items: ['All written content locked'] },
-  { date: 'Feb 21', day: 'Fri', items: ['Record explainer video', 'Final review cycle begins'], milestone: 'DRAFTS LOCKED' },
-  { date: 'Feb 22-23', day: 'Weekend', items: ['Video editing', 'Final polish on all assets'] },
-  { date: 'Feb 24', day: 'Mon', items: ['Final sign-off from Drew', 'Prep HackQuest submission'] },
-  { date: 'Feb 25', day: 'Tue', items: ['SUBMIT EVERYTHING TO HACKQUEST', 'Publish X launch post'], milestone: 'DEADLINE' },
+  { date: 'Feb 21', day: 'Fri', items: ['Record explainer video'], milestone: 'DRAFTS LOCKED' },
+  { date: 'Feb 22-23', day: 'Weekend', items: ['Video editing', 'Final polish'] },
+  { date: 'Feb 24', day: 'Mon', items: ['Final sign-off', 'Prep submission'] },
+  { date: 'Feb 25', day: 'Tue', items: ['SUBMIT TO HACKQUEST'], milestone: 'DEADLINE' },
 ]
 
 const TEAM = [
-  { name: 'Doug', role: 'PM / Chief of Staff', model: 'Claude Opus 4', status: 'active', task: 'Reviewing all deliverable drafts' },
-  { name: 'Lead Analyst', role: 'Research', model: 'Kimi K2.5', status: 'idle', task: 'Research brief delivered. On standby for gap-filling.' },
-  { name: 'Developer', role: 'Frontend', model: 'Kimi K2.5', status: 'idle', task: 'MC v2 and site polish complete. On standby.' },
-  { name: 'Marketing', role: 'Content', model: 'Kimi K2.5', status: 'pending', task: 'Not yet initialized. Queued for content polish.' },
-  { name: 'Drew Stohl', role: 'Founder', model: 'Human', status: 'active', task: 'Reviewing deliverables, providing direction' },
+  { name: 'Doug', role: 'PM / Chief of Staff', model: 'Claude Opus 4', status: 'active', task: 'Technical architecture analysis' },
+  { name: 'Lead Analyst', role: 'Research', model: 'Kimi K2.5', status: 'idle', task: 'On standby' },
+  { name: 'Developer', role: 'Frontend', model: 'Kimi K2.5', status: 'idle', task: 'On standby' },
+  { name: 'Marketing', role: 'Content', model: 'Kimi K2.5', status: 'pending', task: 'Not yet initialized' },
+  { name: 'Drew Stohl', role: 'Founder', model: 'Human', status: 'active', task: 'Reviewing deliverables' },
 ]
 
 const ACTIVITY = [
-  { who: 'Doug', what: 'Competitor analysis completed (25+ companies, strategic recommendations)', when: 'Feb 13, 6:55 PM' },
-  { who: 'Doug', what: 'Video scripts v2 completed (rewritten in Drew\'s voice)', when: 'Feb 13, 6:52 PM' },
-  { who: 'Doug', what: 'X posts v2: cleaned, verified char counts, added 5 "Behind the Build" posts (30 total)', when: 'Feb 13, 6:52 PM' },
-  { who: 'Doug', what: 'Hero headline options delivered (5 options for Drew to pick)', when: 'Feb 13, 6:52 PM' },
-  { who: 'Doug', what: 'Pitch deck rewritten in Drew\'s voice (plain English, no jargon)', when: 'Feb 13, 4:58 PM' },
-  { who: 'Doug', what: 'Proposal v3 completed (major rewrite: 70% mechanism, math specs, anti-gaming proofs)', when: 'Feb 13, 5:15 PM' },
-  { who: 'Doug', what: 'Gap analysis completed (brutal honest assessment of what it takes to win)', when: 'Feb 13, 4:45 PM' },
-  { who: 'Doug', what: 'Winning subnets research completed (SN8, SN1, SN9 analysis)', when: 'Feb 13, 4:46 PM' },
-  { who: 'Dev Agent', what: 'HTML slide deck built at /deck.html (arrow key nav, 16:9, print-to-PDF)', when: 'Feb 13, 4:44 PM' },
-  { who: 'Doug', what: 'MC v3: merged Content+Docs into Deliverables, fixed doc viewer, real data', when: 'Feb 13, 4:20 PM' },
-  { who: 'Doug', what: 'Proposal v2 draft completed (restructured around judging criteria)', when: 'Feb 13, 4:03 PM' },
-  { who: 'Doug', what: 'Video scripts v1 completed (2 versions)', when: 'Feb 13, 4:02 PM' },
-  { who: 'Doug', what: 'X/Twitter posts completed (25 posts across 6 categories)', when: 'Feb 13, 4:01 PM' },
-  { who: 'Doug', what: 'Pitch deck v1 completed (10 slides with speaker notes)', when: 'Feb 13, 4:01 PM' },
-  { who: 'Doug', what: 'Mission Control v2 shipped (6 views + activity)', when: 'Feb 13, 11:20 AM' },
-  { who: 'Dev Agent', what: 'Particles changed to light grey', when: 'Feb 13, 10:30 AM' },
-  { who: 'Dev Agent', what: 'All blues unified to ice blue (#38BDF8)', when: 'Feb 13, 10:20 AM' },
-  { who: 'Dev Agent', what: 'Login page fixed (dark inputs, logo, contrast)', when: 'Feb 13, 10:15 AM' },
-  { who: 'Drew', what: 'Sent logo design', when: 'Feb 12, 11:30 PM' },
-  { who: 'Doug', what: 'Manifesto line locked', when: 'Feb 12, 11:00 PM' },
-  { who: 'Dev Agent', what: 'Landing page full Crypture-inspired redesign', when: 'Feb 12, 10:00 PM' },
-  { who: 'Dev Agent', what: 'Mission Control v1 built', when: 'Feb 12, 9:00 PM' },
-  { who: 'Doug', what: 'Project plan created', when: 'Feb 12, 7:00 PM' },
-  { who: 'Lead Analyst', what: 'Research brief v1 delivered', when: 'Feb 12, 6:30 PM' },
-  { who: 'Dev Agent', what: 'Landing page v1 deployed to Vercel', when: 'Feb 12, 5:00 PM' },
-  { who: 'Doug', what: 'First boot. Met Drew. Set up workspace.', when: 'Feb 12, 3:00 PM' },
+  { who: 'Doug', what: 'Technical architecture analysis started', when: 'Feb 14, 9:00 AM' },
+  { who: 'Doug', what: 'MC rebuilt as file manager (Google Drive style)', when: 'Feb 14, 9:00 AM' },
+  { who: 'Doug', what: 'Competitor analysis completed (25+ companies)', when: 'Feb 13, 6:55 PM' },
+  { who: 'Doug', what: 'Video scripts v2 completed (Drew\'s voice)', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'X posts v2: 30 posts, verified char counts', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'Hero headline options delivered (5 options)', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'Pitch deck rewritten in Drew\'s voice', when: 'Feb 13, 4:58 PM' },
+  { who: 'Doug', what: 'Proposal v3 completed (major mechanism design rewrite)', when: 'Feb 13, 5:15 PM' },
+  { who: 'Doug', what: 'Gap analysis + winning subnets research completed', when: 'Feb 13, 4:45 PM' },
+  { who: 'Doug', what: 'MC v3: merged Content+Docs, fixed doc viewer', when: 'Feb 13, 4:20 PM' },
+  { who: 'Doug', what: 'All 4 first drafts completed (proposal, deck, scripts, posts)', when: 'Feb 13, 4:03 PM' },
+  { who: 'Doug', what: 'Mission Control v2 shipped', when: 'Feb 13, 11:20 AM' },
+  { who: 'Dev Agent', what: 'Landing page polish (particles, colors, login)', when: 'Feb 13, 10:15 AM' },
+  { who: 'Doug', what: 'First boot. Met Drew.', when: 'Feb 12, 3:00 PM' },
 ]
 
-// === COMPONENT ===
-type View = 'tasks' | 'deliverables' | 'approvals' | 'calendar' | 'team' | 'activity'
+// === VIEWS ===
+type View = 'files' | 'tasks' | 'approvals' | 'calendar' | 'team' | 'activity'
 
 const NAV: { id: View; label: string; icon: any }[] = [
+  { id: 'files', label: 'Files', icon: FolderOpen },
   { id: 'tasks', label: 'Tasks', icon: CheckSquare },
-  { id: 'deliverables', label: 'Deliverables', icon: FileText },
   { id: 'approvals', label: 'Approvals', icon: ClipboardCheck },
   { id: 'calendar', label: 'Calendar', icon: Calendar },
   { id: 'team', label: 'Team', icon: Users },
@@ -138,12 +159,11 @@ function Badge({ s }: { s: string }) {
   const m: Record<string, string> = {
     'Needs Review': 'bg-amber-500/20 text-amber-400',
     'Needs Drew': 'bg-amber-500/20 text-amber-400',
+    'Needs Drew Pick': 'bg-amber-500/20 text-amber-400',
     'Complete': 'bg-emerald-500/20 text-emerald-400',
     'Locked': 'bg-purple-500/20 text-purple-400',
-    'Superseded': 'bg-white/10 text-[#64748B]',
-    'Reference': 'bg-white/10 text-[#64748B]',
-    'Living Doc': 'bg-[#38BDF8]/20 text-[#38BDF8]',
-    'Waiting on Doug': 'bg-[#38BDF8]/20 text-[#38BDF8]',
+    'Superseded': 'bg-white/5 text-[#64748B]',
+    'Reference': 'bg-white/5 text-[#64748B]',
     'Waiting on Drew': 'bg-orange-500/20 text-orange-400',
   }
   return <span className={`text-xs px-2 py-0.5 rounded whitespace-nowrap ${m[s] || 'bg-white/10 text-[#64748B]'}`}>{s}</span>
@@ -155,23 +175,38 @@ function PBadge({ p }: { p: string }) {
 }
 
 export default function MissionControl() {
-  const [view, setView] = useState<View>('deliverables')
-  const [readingDoc, setReadingDoc] = useState<string | null>(null)
-  const [docContent, setDocContent] = useState('')
+  const [view, setView] = useState<View>('files')
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['Submission Deliverables']))
+  const [previewFile, setPreviewFile] = useState<{ name: string; file: string } | null>(null)
+  const [previewContent, setPreviewContent] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const openDoc = async (file: string) => {
-    // External links open in new tab
-    if (file.startsWith('__external__')) {
-      window.open(file.replace('__external__', ''), '_blank')
+  const toggleFolder = (name: string) => {
+    const next = new Set(expandedFolders)
+    next.has(name) ? next.delete(name) : next.add(name)
+    setExpandedFolders(next)
+  }
+
+  const openFile = (f: FileItem) => {
+    if (f.file.startsWith('__external__')) {
+      window.open(f.file.replace('__external__', ''), '_blank')
+      return
+    }
+    // Open as download/new tab for review (not inline)
+    window.open(`/docs/${f.file}.md`, '_blank')
+  }
+
+  const previewDoc = async (f: FileItem) => {
+    if (f.file.startsWith('__external__')) {
+      window.open(f.file.replace('__external__', ''), '_blank')
       return
     }
     setLoading(true)
     try {
-      const r = await fetch(`/docs/${file}.md`)
-      setDocContent(await r.text())
-      setReadingDoc(file)
-    } catch { setDocContent('# Error loading document') }
+      const r = await fetch(`/docs/${f.file}.md`)
+      setPreviewContent(await r.text())
+      setPreviewFile({ name: f.name, file: f.file })
+    } catch { setPreviewContent('Error loading file.') }
     setLoading(false)
   }
 
@@ -183,28 +218,26 @@ export default function MissionControl() {
   const total = TASKS.backlog.length + TASKS.inProgress.length + TASKS.done.length
   const pct = Math.round((TASKS.done.length / total) * 100)
 
-  // If reading a doc, show full-screen reader
-  if (readingDoc) {
-    const d = DELIVERABLES.find(x => x.file === readingDoc)
+  // Preview mode
+  if (previewFile) {
     return (
       <div className="min-h-screen bg-[#0A0F1A] p-6">
         <div className="max-w-4xl mx-auto">
-          <button onClick={() => setReadingDoc(null)} className="text-[#94A3B8] hover:text-[#38BDF8] text-sm mb-6 flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> Back to Deliverables
-          </button>
-          {d && (
-            <div className="flex items-center gap-3 mb-4">
-              <h1 className="text-xl font-bold text-[#F1F5F9]">{d.title}</h1>
-              <Badge s={d.status} />
-              <span className="text-sm text-[#64748B]">{d.version}</span>
-            </div>
-          )}
+          <div className="flex items-center justify-between mb-6">
+            <button onClick={() => setPreviewFile(null)} className="text-[#94A3B8] hover:text-[#38BDF8] text-sm flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" /> Back to Files
+            </button>
+            <a href={`/docs/${previewFile.file}.md`} target="_blank" className="text-[#38BDF8] hover:text-[#38BDF8]/80 text-sm flex items-center gap-2">
+              <Download className="w-4 h-4" /> Open Raw File
+            </a>
+          </div>
+          <h1 className="text-xl font-bold text-[#F1F5F9] mb-4">{previewFile.name}</h1>
           {loading ? (
             <p className="text-[#64748B]">Loading...</p>
           ) : (
             <Card className="p-8">
-              <div className="prose prose-invert max-w-none prose-headings:text-[#F1F5F9] prose-p:text-[#94A3B8] prose-strong:text-[#F1F5F9] prose-code:text-[#38BDF8] prose-li:text-[#94A3B8] prose-table:text-[#94A3B8] prose-th:text-[#F1F5F9] prose-td:text-[#94A3B8] prose-hr:border-[#1E2A42]">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{docContent}</ReactMarkdown>
+              <div className="prose prose-invert max-w-none prose-headings:text-[#F1F5F9] prose-p:text-[#94A3B8] prose-strong:text-[#F1F5F9] prose-code:text-[#38BDF8] prose-li:text-[#94A3B8] prose-th:text-[#F1F5F9] prose-td:text-[#94A3B8] prose-hr:border-[#1E2A42]">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{previewContent}</ReactMarkdown>
               </div>
             </Card>
           )}
@@ -248,32 +281,86 @@ export default function MissionControl() {
 
         <div className="p-6 max-w-5xl">
 
-          {/* DELIVERABLES */}
-          {view === 'deliverables' && (
-            <div className="space-y-4">
-              <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#F1F5F9]">Deliverables</h2>
-                <p className="text-sm text-[#94A3B8] mt-1">Click any deliverable to read the full document.</p>
+          {/* FILES */}
+          {view === 'files' && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-[#F1F5F9]">Files</h2>
+                  <p className="text-sm text-[#94A3B8] mt-0.5">Click any file to open. Use the eye icon to preview.</p>
+                </div>
               </div>
-              {DELIVERABLES.map((d, i) => (
-                <Card key={i} className="p-4 cursor-pointer hover:border-[#38BDF8]/50 transition-colors" onClick={() => openDoc(d.file)}>
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-[#38BDF8] flex-shrink-0" />
-                      <div>
-                        <h3 className="text-[#F1F5F9] font-medium">{d.title}</h3>
-                        <p className="text-sm text-[#94A3B8] mt-0.5">{d.desc}</p>
+
+              {FILE_SYSTEM.map(folder => (
+                <div key={folder.name}>
+                  {/* Folder header */}
+                  <button
+                    onClick={() => toggleFolder(folder.name)}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    <ChevronRight className={`w-4 h-4 text-[#64748B] transition-transform ${expandedFolders.has(folder.name) ? 'rotate-90' : ''}`} />
+                    {expandedFolders.has(folder.name)
+                      ? <FolderOpen className="w-4 h-4 text-[#38BDF8]" />
+                      : <Folder className="w-4 h-4 text-[#38BDF8]" />
+                    }
+                    <span className="text-[#F1F5F9] font-medium text-sm">{folder.name}</span>
+                    <span className="text-[#64748B] text-xs ml-1">{folder.files.length} files</span>
+                  </button>
+
+                  {/* File list */}
+                  {expandedFolders.has(folder.name) && (
+                    <div className="ml-6 border-l border-[#1E2A42] pl-2 mb-2">
+                      {/* Table header */}
+                      <div className="grid grid-cols-12 gap-2 px-3 py-1.5 text-xs text-[#64748B] uppercase tracking-wider">
+                        <div className="col-span-5">Name</div>
+                        <div className="col-span-1">Version</div>
+                        <div className="col-span-2">Status</div>
+                        <div className="col-span-1">Date</div>
+                        <div className="col-span-1">Size</div>
+                        <div className="col-span-1">Owner</div>
+                        <div className="col-span-1"></div>
                       </div>
+
+                      {folder.files.map((f, i) => (
+                        <div
+                          key={i}
+                          className="grid grid-cols-12 gap-2 items-center px-3 py-2.5 hover:bg-white/5 rounded-lg transition-colors cursor-pointer group"
+                          onClick={() => openFile(f)}
+                        >
+                          <div className="col-span-5 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-[#94A3B8] flex-shrink-0" />
+                            <span className="text-sm text-[#F1F5F9] group-hover:text-[#38BDF8] transition-colors truncate">{f.name}</span>
+                          </div>
+                          <div className="col-span-1 text-xs text-[#94A3B8]">{f.version}</div>
+                          <div className="col-span-2"><Badge s={f.status} /></div>
+                          <div className="col-span-1 text-xs text-[#64748B]">{f.date}</div>
+                          <div className="col-span-1 text-xs text-[#64748B]">{f.size}</div>
+                          <div className="col-span-1 text-xs text-[#64748B]">{f.owner}</div>
+                          <div className="col-span-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); previewDoc(f) }}
+                              className="p-1 text-[#64748B] hover:text-[#38BDF8]"
+                              title="Preview"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            {!f.file.startsWith('__external__') && (
+                              <a
+                                href={`/docs/${f.file}.md`}
+                                download
+                                onClick={(e) => e.stopPropagation()}
+                                className="p-1 text-[#64748B] hover:text-[#38BDF8]"
+                                title="Download"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                      <span className="text-xs text-[#64748B]">{d.version}</span>
-                      <Badge s={d.status} />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-8 text-xs text-[#64748B]">
-                    <span>Owner: {d.owner}</span>
-                  </div>
-                </Card>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -302,8 +389,7 @@ export default function MissionControl() {
                       <h4 className="text-sm font-medium text-[#F1F5F9] mb-1">{t.title}</h4>
                       {t.note && <p className="text-xs text-[#94A3B8] mb-2">{t.note}</p>}
                       <div className="flex items-center justify-between">
-                        <PBadge p={t.priority} />
-                        <span className="text-xs text-[#64748B]">{t.owner}</span>
+                        <PBadge p={t.priority} /><span className="text-xs text-[#64748B]">{t.owner}</span>
                       </div>
                     </Card>
                   ))}</div>
@@ -315,8 +401,7 @@ export default function MissionControl() {
                       <h4 className="text-sm font-medium text-[#F1F5F9] mb-1">{t.title}</h4>
                       {t.note && <p className="text-xs text-[#94A3B8] mb-2">{t.note}</p>}
                       <div className="flex items-center justify-between">
-                        <PBadge p={t.priority} />
-                        <span className="text-xs text-[#64748B]">{t.owner}</span>
+                        <PBadge p={t.priority} /><span className="text-xs text-[#64748B]">{t.owner}</span>
                       </div>
                     </Card>
                   ))}</div>
@@ -337,10 +422,7 @@ export default function MissionControl() {
           {/* APPROVALS */}
           {view === 'approvals' && (
             <div className="space-y-4">
-              <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#F1F5F9]">Approvals and Decisions</h2>
-                <p className="text-sm text-[#94A3B8] mt-1">Items waiting on Drew or Doug to move forward.</p>
-              </div>
+              <h2 className="text-lg font-bold text-[#F1F5F9] mb-4">Approvals and Decisions</h2>
               {APPROVALS.map((a, i) => (
                 <Card key={i} className="p-4 flex items-center justify-between">
                   <div>
@@ -356,21 +438,14 @@ export default function MissionControl() {
           {/* CALENDAR */}
           {view === 'calendar' && (
             <div className="space-y-4">
-              <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#F1F5F9]">Sprint Timeline</h2>
-                <p className="text-sm text-[#94A3B8] mt-1">Feb 12 to Feb 25. Deadline is immovable.</p>
-              </div>
+              <h2 className="text-lg font-bold text-[#F1F5F9] mb-4">Sprint Timeline</h2>
               {CALENDAR.map((d, i) => (
                 <Card key={i} className={`p-4 ${d.today ? 'border-l-2 border-l-[#38BDF8]' : ''} ${d.past ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-3 mb-2">
                     <span className={`font-semibold ${d.today ? 'text-[#38BDF8]' : 'text-[#F1F5F9]'}`}>{d.date}</span>
                     <span className="text-[#64748B] text-sm">{d.day}</span>
                     {d.today && <span className="text-xs px-2 py-0.5 rounded bg-[#38BDF8]/20 text-[#38BDF8]">TODAY</span>}
-                    {d.milestone && (
-                      <span className={`ml-auto text-xs px-2 py-0.5 rounded ${d.milestone === 'DEADLINE' ? 'bg-red-500/20 text-red-400' : 'bg-purple-500/20 text-purple-400'}`}>
-                        {d.milestone}
-                      </span>
-                    )}
+                    {d.milestone && <span className={`ml-auto text-xs px-2 py-0.5 rounded ${d.milestone === 'DEADLINE' ? 'bg-red-500/20 text-red-400' : 'bg-purple-500/20 text-purple-400'}`}>{d.milestone}</span>}
                   </div>
                   <ul className="space-y-0.5">
                     {d.items.map((item, j) => <li key={j} className="text-sm text-[#94A3B8]">• {item}</li>)}
@@ -405,10 +480,7 @@ export default function MissionControl() {
           {/* ACTIVITY */}
           {view === 'activity' && (
             <div className="space-y-4">
-              <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#F1F5F9]">Activity Log</h2>
-                <p className="text-sm text-[#94A3B8] mt-1">Everything that has happened on this project.</p>
-              </div>
+              <h2 className="text-lg font-bold text-[#F1F5F9] mb-4">Activity Log</h2>
               {ACTIVITY.map((a, i) => (
                 <Card key={i} className="p-4">
                   <div className="flex items-center justify-between mb-1">
@@ -420,7 +492,6 @@ export default function MissionControl() {
               ))}
             </div>
           )}
-
         </div>
       </main>
     </div>
