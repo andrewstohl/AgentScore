@@ -37,6 +37,12 @@ const FILE_SYSTEM: FolderItem[] = [
     ]
   },
   {
+    name: 'Technical',
+    files: [
+      { name: 'Technical Architecture & Build Plan', file: 'technical-architecture', version: 'v1', status: 'Needs Review', date: 'Feb 14', size: '18 KB', owner: 'Doug' },
+    ]
+  },
+  {
     name: 'Strategy & Research',
     files: [
       { name: 'Gap Analysis (How to Win)', file: 'gap-analysis', version: 'v1', status: 'Complete', date: 'Feb 13', size: '24 KB', owner: 'Doug' },
