@@ -17,20 +17,22 @@ const TASKS = {
     { title: 'Fill research gaps', owner: 'Doug', priority: 'high', note: 'x402 endpoints, AP2, competitor scan' },
   ],
   inProgress: [
-    { title: 'Hero headline options for Drew', owner: 'Doug', priority: 'medium', note: 'Drew unhappy with current' },
-    { title: 'Landing page polish', owner: 'Doug', priority: 'medium', note: 'Dark hero bg, particle visibility' },
-    { title: 'Drew: review all deliverables in MC', owner: 'Drew', priority: 'high', note: 'Proposal v3, deck, scripts, X posts' },
+    { title: 'Drew: review all deliverables in MC', owner: 'Drew', priority: 'high', note: 'Proposal, deck, scripts, X posts, headlines' },
+    { title: 'Drew: pick hero headline', owner: 'Drew', priority: 'medium', note: '5 options ready' },
+    { title: 'Research gaps (x402, AP2, ACP details)', owner: 'Doug', priority: 'medium', note: 'Agent running' },
+    { title: 'Landing page: update hero headline', owner: 'Doug', priority: 'medium', note: 'Waiting on Drew pick' },
   ],
   done: [
+    { title: 'Competitor analysis (25+ companies)', owner: 'Doug' },
+    { title: 'Video scripts v2 (Drew\'s voice)', owner: 'Doug' },
+    { title: 'X posts v2 (30 posts, verified)', owner: 'Doug' },
+    { title: 'Hero headline options (5)', owner: 'Doug' },
     { title: 'Proposal v3 (major rewrite)', owner: 'Doug' },
-    { title: 'Gap analysis (what it takes to win)', owner: 'Doug' },
+    { title: 'Pitch deck rewrite (Drew\'s voice)', owner: 'Doug' },
+    { title: 'Gap analysis', owner: 'Doug' },
     { title: 'Winning subnets research', owner: 'Doug' },
     { title: 'HTML slide deck (/deck.html)', owner: 'Dev Agent' },
-    { title: 'Proposal v2 first draft', owner: 'Doug' },
-    { title: 'Pitch deck v1 first draft', owner: 'Doug' },
-    { title: 'Video scripts v1 (2 versions)', owner: 'Doug' },
-    { title: 'X/Twitter posts (25 ideas)', owner: 'Doug' },
-    { title: 'Mission Control v2+v3', owner: 'Doug' },
+    { title: 'Mission Control v2+v3+v4', owner: 'Doug' },
     { title: 'Landing page redesign', owner: 'Dev Agent' },
     { title: 'Research brief v1', owner: 'Lead Analyst' },
     { title: 'Project plan', owner: 'Doug' },
@@ -43,16 +45,15 @@ const TASKS = {
 }
 
 const DELIVERABLES = [
-  { title: '⭐ Subnet Design Proposal', file: 'proposal-v3', version: 'v3 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Major rewrite. 70% mechanism design, 30% business. Mathematical specs, anti-gaming proofs, YC3 parameters, dTAO strategy. Based on gap analysis.' },
-  { title: '⭐ Pitch Deck (SLIDES)', file: '__external__/deck.html', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Real slide deck. Arrow keys to navigate. Ctrl+P to save as PDF.' },
-  { title: 'Explainer Video Scripts', file: 'video-scripts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: 'Two versions: "The Problem" narrative and "The Future" narrative. 6-7 min each.' },
-  { title: 'X/Twitter Launch Posts (25)', file: 'x-posts-v1', version: 'v1 Draft', status: 'Needs Review', owner: 'Doug', desc: '25 posts across 6 categories. Posting cadence and voice guide included.' },
-  { title: 'Gap Analysis', file: 'gap-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'Brutally honest assessment of what it takes to WIN. Identifies weaknesses, required improvements, what to cut.' },
-  { title: 'Winning Subnets Research', file: 'winning-subnets-research', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'Analysis of SN8, SN1, SN9 mechanisms. What winning looks like. Bittensor terminology guide.' },
+  { title: '⭐ Subnet Design Proposal', file: 'proposal-v3', version: 'v3', status: 'Needs Review', owner: 'Doug', desc: 'Major rewrite. 70% mechanism design. Math specs, anti-gaming proofs, dTAO strategy. Team section updated.' },
+  { title: '⭐ Pitch Deck (SLIDES)', file: '__external__/deck.html', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: 'Real slides in Drew\'s voice. Arrow keys to navigate. Ctrl+P to save as PDF.' },
+  { title: '⭐ Video Scripts', file: 'video-scripts-v2', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: 'Rewritten in Drew\'s voice. Two versions: "The Problem" and "The Future". 6-7 min each.' },
+  { title: '⭐ X/Twitter Posts (30)', file: 'x-posts-v2', version: 'v2', status: 'Needs Review', owner: 'Doug', desc: '30 posts with character counts. New "Behind the Build" category. All verified under 280 chars.' },
+  { title: '⭐ Hero Headline Options', file: 'hero-headline-options', version: 'v1', status: 'Needs Drew Pick', owner: 'Doug', desc: '5 options to replace current hero headline. Modern, no "credit rating agency" framing.' },
+  { title: 'Competitor Analysis', file: 'competitor-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: '25+ companies analyzed. Direct, adjacent, and future competitors. Strategic recommendations.' },
+  { title: 'Gap Analysis', file: 'gap-analysis', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'What it takes to WIN. Weaknesses, required improvements, what to cut.' },
+  { title: 'Winning Subnets Research', file: 'winning-subnets-research', version: 'v1', status: 'Complete', owner: 'Doug', desc: 'SN8, SN1, SN9 deep analysis. Bittensor terminology guide.' },
   { title: 'Research Brief', file: 'research-brief', version: 'v1', status: 'Complete', owner: 'Lead Analyst', desc: 'Bittensor ecosystem, agentic commerce landscape, ideathon intel.' },
-  { title: 'Previous Proposal (v2)', file: 'proposal-v2', version: 'v2', status: 'Superseded', owner: 'Doug', desc: 'Superseded by v3. Kept for reference.' },
-  { title: 'Original Proposal (v1)', file: 'ideathon-submission', version: 'v1', status: 'Superseded', owner: 'Doug', desc: 'Original submission doc. Kept for reference.' },
-  { title: 'Business Analysis', file: 'business-analysis', version: 'v1', status: 'Reference', owner: 'Doug', desc: 'Internal strategic analysis. Not a submission deliverable.' },
 ]
 
 const APPROVALS = [
@@ -89,6 +90,11 @@ const TEAM = [
 ]
 
 const ACTIVITY = [
+  { who: 'Doug', what: 'Competitor analysis completed (25+ companies, strategic recommendations)', when: 'Feb 13, 6:55 PM' },
+  { who: 'Doug', what: 'Video scripts v2 completed (rewritten in Drew\'s voice)', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'X posts v2: cleaned, verified char counts, added 5 "Behind the Build" posts (30 total)', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'Hero headline options delivered (5 options for Drew to pick)', when: 'Feb 13, 6:52 PM' },
+  { who: 'Doug', what: 'Pitch deck rewritten in Drew\'s voice (plain English, no jargon)', when: 'Feb 13, 4:58 PM' },
   { who: 'Doug', what: 'Proposal v3 completed (major rewrite: 70% mechanism, math specs, anti-gaming proofs)', when: 'Feb 13, 5:15 PM' },
   { who: 'Doug', what: 'Gap analysis completed (brutal honest assessment of what it takes to win)', when: 'Feb 13, 4:45 PM' },
   { who: 'Doug', what: 'Winning subnets research completed (SN8, SN1, SN9 analysis)', when: 'Feb 13, 4:46 PM' },

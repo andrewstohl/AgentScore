@@ -362,11 +362,11 @@ Target: positive net TAO flow within 30 days of mainnet launch, sustained by com
 
 ## 7. Team and Execution
 
-**Founder:** Business and product strategy background. Deep understanding of the Bittensor ecosystem and incentive mechanism design.
+**Drew Stohl, Founder.** Business strategy, product design, and go-to-market. Drew brings the commercial lens: identifying the market gap, designing the distribution strategy, and building ecosystem relationships. The mechanism design specifications in this proposal were developed in collaboration with technical advisors with expertise in distributed systems, incentive design, and Bittensor architecture.
 
-**Technical hiring:** Actively recruiting one senior Python/distributed systems developer with Bittensor SDK experience. This is the critical path for testnet launch.
+**Technical team:** Actively recruiting one senior Python/distributed systems developer with Bittensor SDK experience. Candidates with direct subnet development experience are in pipeline. This is the critical path for testnet launch.
 
-**Execution model:** Lean team focused on mechanism design and ecosystem relationships. The Bittensor model means intelligence production is crowdsourced via miners. Our role is designing the scoring function, building validator infrastructure, and driving distribution.
+**Execution model:** Lean team focused on mechanism design and ecosystem relationships. The Bittensor model means intelligence production is crowdsourced via miners. Our role is designing the scoring function, building validator infrastructure, and driving distribution. The hard technical work of continuous probing, model building, and prediction generation is performed by miners pursuing emission rewards.
 
 ---
 
